@@ -19,7 +19,7 @@ import Sidebar from "./Sidebar";
 
 
 // }));
-const StyledAppBar = styled(Box)({
+const StyledAppBar = styled(AppBar)({
   background:'#002D62',
   zIndex: 1300,
   width:'100%',

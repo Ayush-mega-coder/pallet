@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import { styled } from "@mui/material/styles";
 import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import {
   Button,
@@ -21,6 +22,7 @@ import { makeStyles } from "@mui/styles";
 const useStyles = makeStyles((theme) => ({
   container: {
     // margin: "20px",
+    marginTop:'100px',
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -28,19 +30,24 @@ const useStyles = makeStyles((theme) => ({
     gap: "20px",
     "& .MuiTextField-root, & .MuiFormControl-root": {
       width: "50%",
+      
     },
   },
+  
   formControl: {
     width: "50%",
+
   },
   box: {
+
+    margin:'10px',
     display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+
+    justifyContent: "space-between",
   },
   button: {
     margin: "10px",
-    backgroundColor: "white",
+    backgroundColor: "red",
     color: "black",
     "&:hover": {
       backgroundColor: "white",
@@ -51,7 +58,11 @@ const useStyles = makeStyles((theme) => ({
     // You can add any custom styles for InputLabel here
   },
 }));
-
+const StyledAsyncCreatableSelect = styled(AsyncCreatableSelect)({
+  width: "50%",
+  // Add other styles here to match the TextField
+  // For example: fontFamily, fontSize, padding, etc.
+});
 interface FormValues {
   userId: string;
   name: string;
@@ -120,21 +131,21 @@ const IngredientsCreateForm: React.FC = () => {
   return (
     <div>
       <div className={classes.container}>
-        <Controller
-          name="userId"
-          control={control}
-          defaultValue=""
-          rules={{ required: "User ID is required" }}
-          render={({ field }) => (
-            <AsyncCreatableSelect
-              cacheOptions
-              defaultOptions
-              loadOptions={loadOptions}
-              {...field}
-              placeholder="UserID"
-            />
-          )}
-        />
+      <Controller
+  name="userId"
+  control={control}
+  defaultValue=""
+  rules={{ required: "User ID is required" }}
+  render={({ field }) => (
+    <StyledAsyncCreatableSelect
+      cacheOptions
+      defaultOptions
+      loadOptions={loadOptions}
+      {...field}
+      placeholder="UserID"
+    />
+  )}
+/>
 
         <Controller
           name="name"
@@ -224,9 +235,14 @@ const IngredientsCreateForm: React.FC = () => {
             </section>
           )}
         />
-      </div>
-
       <Box mt={2} className={classes.box}>
+        <Button
+          onClick={handleSubmit(onSubmit)}
+          startIcon={<AddIcon />}
+          className={classes.button}
+        >
+          Save
+        </Button>
         <Button
           onClick={handleSubmit(onSubmit)}
           startIcon={<AddIcon />}
@@ -235,6 +251,8 @@ const IngredientsCreateForm: React.FC = () => {
           Add Item
         </Button>
       </Box>
+      </div>
+
     </div>
   );
 };

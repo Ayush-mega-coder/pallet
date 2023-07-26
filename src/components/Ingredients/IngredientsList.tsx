@@ -18,10 +18,13 @@ import {
 } from "@mui/material";
 const AddBox = styled(Box)({
   display: "flex",
-  justifyContent: "center",
+  justifyContent: "flex-end",
+  marginTop: "50px",
+  marginRight:"50px"
 });
 const StyledButton = styled(Button)({
-  margin: "20px",
+
+  margin: "10px",
   backgroundColor:'white',
   color:'black',
   "&:hover": {
@@ -32,7 +35,7 @@ const StyledButton = styled(Button)({
 });
 const StyledButtonCreate = styled(Button)({
 
-  margin: "20px",
+  margin: "10px",
 
   backgroundColor:'white',
   color:'black',
@@ -115,22 +118,7 @@ const IngredientsList: React.FC = () => {
 
   return (
     <>
-    
-    <div style={{ marginLeft:'200px', height: 300, width: "70%" }}>
-      <DataGrid
-        columns={columns}
-        rows={ingredients}
-        checkboxSelection
-        pagination
-        // sortModel={[
-        //   {
-        //     field: "name",
-        //     sort: "asc",
-        //   },
-        // ]}
-        onRowClick={handleRowClick}
-      />
-      <AddBox>
+     <AddBox>
         <StyledButton
           variant="contained"
           startIcon={<DeleteIcon />}
@@ -147,6 +135,22 @@ const IngredientsList: React.FC = () => {
         </StyledButtonCreate>
         
       </AddBox>
+    
+    <div style={{ marginLeft:'220px',marginTop:'10px',height: 300, width: "80%" }}>
+      <DataGrid
+        columns={columns}
+        rows={ingredients}
+        checkboxSelection
+        pagination
+        // sortModel={[
+        //   {
+        //     field: "name",
+        //     sort: "asc",
+        //   },
+        // ]}
+        onRowClick={handleRowClick}
+      />
+     
     </div>
     </>
   );
