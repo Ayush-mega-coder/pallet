@@ -1,15 +1,13 @@
-// Layout.tsx
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, PropsWithChildren } from "react";
 import Login from "./Login";
-import Admin from "./Admin";
+import Header from "./Header";
 
 interface LoginPopupProps {
   onClose: () => void;
   onLoginSuccess: () => void;
 }
 
-const Layout: React.FC = () => {
+const Layout: React.FC<PropsWithChildren> = (props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
 
@@ -37,17 +35,15 @@ const Layout: React.FC = () => {
 
   return (
     <>
-      {isLoggedIn ? (
-        <Admin />
-      ) : (
-
-        showLoginPopup && (
+        <Header />
+        {/* showLoginPopup && (
           <Login
             showPopup={showLoginPopup}
             onLoginSuccess={handleLoginSuccess}
           />
-        )
-      )}
+        ) */}
+          {props.children}
+          
     </>
   );
 };

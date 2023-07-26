@@ -40,18 +40,13 @@ const UserList: React.FC = () => {
   };
 
   return (
-    <div style={{ height: 300, width: "100%" }}>
+    <div style={{ marginLeft:'190px', height: 300, width: "70%" }}>
       <DataGrid
         columns={columns}
         rows={users}
         checkboxSelection
         pagination
-        sortModel={[
-          {
-            field: "name",
-            sort: "asc",
-          },
-        ]}
+        
         onRowClick={handleRowClick}
       />
       {/* <Button variant="contained" color="secondary" startIcon={<DeleteIcon />} onClick={handleDeleteClick}>

@@ -12,9 +12,20 @@ import { styled } from "@mui/material/styles";
 import { Theme } from "@mui/material/styles";
 import Sidebar from "./Sidebar";
 
-const StyledAppBar = styled(AppBar)(({ theme: Theme }) => ({
-  zIndex: Theme.zIndex.drawer + 1,
-}));
+// const StyledAppBar = styled(AppBar)(({ theme: Theme }) => ({
+//   zIndex: Theme.zIndex.drawer + 1,
+//   backgroundColor: Theme.palette.common.white,
+//   color: Theme.palette.common.black,
+
+
+// }));
+const StyledAppBar = styled(Box)({
+  background:'#002D62',
+  zIndex: 1300,
+  width:'100%',
+  color:'white',
+  height:'57px'
+})
 
 const HeaderContainer = styled(Box)({
   width: "400px",
@@ -26,6 +37,7 @@ const HeaderContainer = styled(Box)({
   justifyContent: "center",
   fontSize: "40px",
 });
+
 
 const Header: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -64,6 +76,8 @@ const Header: React.FC = () => {
       </StyledAppBar>
 
       <Sidebar open={isSidebarOpen} onClose={handleSidebarClose} />
+
+
     </>
   );
 };

@@ -7,6 +7,9 @@ import Button from "@mui/material/Button";
 import onion from "../../assets/ingredients/onion.png";
 import garlic from "../../assets/ingredients/garlic.png";
 import tomato from "../../assets/ingredients/tomato.png";
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+
 
 const dummyIngredients = [
   // Your dummy ingredient data here...
@@ -86,6 +89,13 @@ const AddBox = styled(Box)({
 });
 const StyledButton = styled(Button)({
   margin: "10px",
+  backgroundColor:'white',
+  color:'black',
+ 
+  "&:hover": {
+    backgroundColor: 'white', 
+    color: 'black',
+  },
 });
 
 const IngredientShowPage: React.FC = () => {
@@ -119,10 +129,13 @@ const IngredientShowPage: React.FC = () => {
         {/* <CloseButton to="/ingredients">&times;</CloseButton> */}
       </Container>
       <AddBox>
-        <StyledButton variant="contained" onClick={handleAddButton}>
+        <StyledButton variant="contained" onClick={handleAddButton} startIcon={<AddIcon />}>
+          
           Add Item
         </StyledButton>
-        <StyledButton variant="contained" onClick={handleEditButton}>
+        <StyledButton variant="contained" onClick={handleEditButton} startIcon={<EditIcon />}>
+
+          
           Edit Item
         </StyledButton>
       </AddBox>

@@ -23,9 +23,12 @@ interface SidebarProps {
 
 const StyledDrawer = styled(Drawer)(({ theme }) => ({
   "& .MuiDrawer-paper": {
-    width: "250px",
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.common.white,
+    width: "190px",
+    backgroundColor: theme.palette.common.white,
+    color: theme.palette.common.black,
+  },
+  "& .MuiBackdrop-root": {
+    backgroundColor: "transparent",
   },
 }));
 
@@ -35,12 +38,18 @@ const SidebarList = styled(List)({
 
 const SidebarItem = styled(ListItem)(({ theme }) => ({
   "&.Mui-selected": {
-    backgroundColor: theme.palette.primary.dark,
+    backgroundColor: theme.palette.common.black,
     "&:hover": {
       backgroundColor: theme.palette.primary.dark,
     },
   },
   cursor: "pointer",
+  "&:hover": {
+    "& .MuiListItemText-primary": {
+      backgroundColor: theme.palette.primary.dark,
+      color: theme.palette.common.white,
+    },
+  },
 }));
 
 const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
@@ -50,10 +59,12 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
   const [showUsers, setShowUsers] = useState(false);
 
   const handleIngredientsClick = () => {
-    setShowIngredientsList(!showIngredientsList);
+    // setShowIngredientsList(!showIngredientsList);
+    // navigate("/ingridients")
   };
   const handleUsersClick = () => {
-    setShowUsers(!showUsers);
+    // setShowUsers(!showUsers);
+    navigate('/user')
   };
   const handleCreateForm = () => {
     navigate("/ingredients/create");
@@ -79,10 +90,14 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
   const handleUserClick = ()=>{
     // navigate('/user')
   }
+  const handleIngredientsClickButton=()=>{
+    navigate('/ingredients')
+  }
 
   return (
     <>
     <StyledDrawer anchor="left" open={open} onClose={onClose}>
+
       <SidebarList>
         <SidebarItem>
           <ListItemIcon>
@@ -96,63 +111,22 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
           </ListItemIcon>
           <ListItemText primary="Users" onClick={handleUserClick}/>
         </SidebarItem>
-        {showUsers && (
-          <>
-            <SidebarItem>
-              <ListItemIcon>
-              <FormatListBulletedIcon />
-              </ListItemIcon>
-
-              <ListItemText primary="List User" onClick={handleUserList} />
-            </SidebarItem>
-            <SidebarItem>
-              <ListItemIcon>
-              <PreviewIcon />
-              </ListItemIcon>
-
-              <ListItemText primary="Show" onClick={handleShowUser} />
-            </SidebarItem>
-          </>
-        )}
+      
         <SidebarItem onClick={handleIngredientsClick}>
           <ListItemIcon>
             <FastfoodIcon />
           </ListItemIcon>
-          <ListItemText primary="Ingredients" />
+          <ListItemText primary="Ingredients" onClick={handleIngredientsClickButton}/>
         </SidebarItem>
-
-        {showIngredientsList && (
-          <>
-            <SidebarItem>
-              <ListItemIcon>
-                <FormatListBulletedIcon />
-              </ListItemIcon>
-
-              <ListItemText primary="List" onClick={handleFormList} />
-            </SidebarItem>
-            <SidebarItem>
-              <ListItemIcon>
-
-                <CreateNewFolderIcon/>
-              </ListItemIcon>
-
-              <ListItemText primary="Create Form" onClick={handleCreateForm} />
-            </SidebarItem>
-            <SidebarItem>
-              <ListItemIcon>
-                <PreviewIcon />
-              </ListItemIcon>
-              <ListItemText primary="Show" onClick={handleFormShow} />
-            </SidebarItem>
-            <SidebarItem>
-              <ListItemIcon>
-                <EditNoteIcon/>
-              </ListItemIcon>
-              <ListItemText primary="Edit Form" onClick={handleFormEdit} />
-            </SidebarItem>
-          </>
-        )}
+        <SidebarItem onClick={handleIngredientsClick}>
+          <ListItemIcon>
+            <FastfoodIcon />
+          </ListItemIcon>
+          <ListItemText primary="Logout" onClick={handleIngredientsClickButton}/>
+        </SidebarItem>
+      
       </SidebarList>
+      
     </StyledDrawer>
     </>
   );

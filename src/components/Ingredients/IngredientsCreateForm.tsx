@@ -10,11 +10,47 @@ import {
   InputLabel,
   FormHelperText,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
 import { useForm, Controller } from "react-hook-form";
 import AsyncCreatableSelect from "react-select/async-creatable";
+import AddIcon from "@mui/icons-material/Add";
+import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import { userOptions } from "./data";
 import { useDropzone } from "react-dropzone";
+import { makeStyles } from "@mui/styles";
+
+const useStyles = makeStyles((theme) => ({
+  container: {
+    // margin: "20px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "20px",
+    "& .MuiTextField-root, & .MuiFormControl-root": {
+      width: "50%",
+    },
+  },
+  formControl: {
+    width: "50%",
+  },
+  box: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  button: {
+    margin: "10px",
+    backgroundColor: "white",
+    color: "black",
+    "&:hover": {
+      backgroundColor: "white",
+      color: "black",
+    },
+  },
+  inputLabel: {
+    // You can add any custom styles for InputLabel here
+  },
+}));
 
 interface FormValues {
   userId: string;
@@ -25,29 +61,9 @@ interface FormValues {
   picture: File | null;
 }
 
-const AddBox = styled(Box)({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-});
-
-const StyledButton = styled(Button)({
-  margin: "10px",
-});
-
-const FormContainer = styled("div")({
-  margin: "20px",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
-  gap: "20px",
-  "& .MuiTextField-root, & .MuiFormControl-root": {
-    width: "70%",
-  },
-});
-
 const IngredientsCreateForm: React.FC = () => {
+  const classes = useStyles();
+
   const {
     handleSubmit,
     control,
@@ -91,7 +107,7 @@ const IngredientsCreateForm: React.FC = () => {
       if (acceptedFiles && acceptedFiles.length > 0) {
         const selectedFile = acceptedFiles[0];
         console.log("Selected picture:", selectedFile);
-        setValue("picture", selectedFile); 
+        setValue("picture", selectedFile);
       }
     },
     [setValue]
@@ -99,12 +115,11 @@ const IngredientsCreateForm: React.FC = () => {
   // Hook from react-dropzone to handle file drop and selection
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: handleDrop,
-
   });
 
   return (
     <div>
-      <FormContainer>
+      <div className={classes.container}>
         <Controller
           name="userId"
           control={control}
@@ -116,7 +131,7 @@ const IngredientsCreateForm: React.FC = () => {
               defaultOptions
               loadOptions={loadOptions}
               {...field}
-              placeholder="Select User ID"
+              placeholder="UserID"
             />
           )}
         />
@@ -158,15 +173,14 @@ const IngredientsCreateForm: React.FC = () => {
           defaultValue=""
           rules={{ required: "Unit is required" }}
           render={({ field }) => (
-            <FormControl error={!!errors.unit}>
-              <InputLabel>Unit</InputLabel>
+            <FormControl error={!!errors.unit} className={classes.formControl}>
+              <InputLabel className={classes.inputLabel}>Unit</InputLabel>
               <Select {...field}>
                 <MenuItem value="KG">kg</MenuItem>
                 <MenuItem value="GM">g</MenuItem>
                 <MenuItem value="L">L</MenuItem>
                 <MenuItem value="ML">ml</MenuItem>
                 <MenuItem value="COUNT">Count</MenuItem>
-
               </Select>
               <FormHelperText>{errors.unit?.message}</FormHelperText>
             </FormControl>
@@ -188,6 +202,7 @@ const IngredientsCreateForm: React.FC = () => {
             />
           )}
         />
+   
 
         <Controller
           name="picture"
@@ -199,31 +214,27 @@ const IngredientsCreateForm: React.FC = () => {
               <div {...getRootProps()}>
                 <input {...getInputProps()} />
 
-                <StyledButton variant="contained">
+                <Button
+                  startIcon={<AddAPhotoIcon />}
+                  // className={classes.button}
+                >
                   Upload or Drag Pictures
-                </StyledButton>
+                </Button>
               </div>
             </section>
           )}
         />
-      </FormContainer>
+      </div>
 
-      <AddBox mt={2}>
-        <StyledButton
-          variant="contained"
-          color="primary"
+      <Box mt={2} className={classes.box}>
+        <Button
           onClick={handleSubmit(onSubmit)}
+          startIcon={<AddIcon />}
+          className={classes.button}
         >
           Add Item
-        </StyledButton>
-        <StyledButton
-          variant="contained"
-          color="primary"
-          onClick={handleAddMoreButtonClick}
-        >
-          Add More
-        </StyledButton>
-      </AddBox>
+        </Button>
+      </Box>
     </div>
   );
 };

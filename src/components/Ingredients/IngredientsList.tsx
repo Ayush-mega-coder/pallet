@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { styled } from "@mui/material/styles";
 
+import AddIcon from '@mui/icons-material/Add';
+
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
 import {
@@ -20,6 +22,25 @@ const AddBox = styled(Box)({
 });
 const StyledButton = styled(Button)({
   margin: "20px",
+  backgroundColor:'white',
+  color:'black',
+  "&:hover": {
+    backgroundColor: 'white', 
+    color: 'black', 
+  },
+
+});
+const StyledButtonCreate = styled(Button)({
+
+  margin: "20px",
+
+  backgroundColor:'white',
+  color:'black',
+ 
+  "&:hover": {
+    backgroundColor: 'white', 
+    color: 'black',
+  },
 });
 const IngredientsList: React.FC = () => {
   const [ingredients, setIngredients] = useState<any[]>([]);
@@ -93,18 +114,20 @@ const IngredientsList: React.FC = () => {
   };
 
   return (
-    <div style={{ height: 300, width: "100%" }}>
+    <>
+    
+    <div style={{ marginLeft:'200px', height: 300, width: "70%" }}>
       <DataGrid
         columns={columns}
         rows={ingredients}
         checkboxSelection
         pagination
-        sortModel={[
-          {
-            field: "name",
-            sort: "asc",
-          },
-        ]}
+        // sortModel={[
+        //   {
+        //     field: "name",
+        //     sort: "asc",
+        //   },
+        // ]}
         onRowClick={handleRowClick}
       />
       <AddBox>
@@ -115,15 +138,17 @@ const IngredientsList: React.FC = () => {
         >
           Bulk Delete
         </StyledButton>
-        <StyledButton
+        <StyledButtonCreate
           variant="contained"
-          startIcon={<DeleteIcon />}
+          startIcon={<AddIcon />}
           onClick={handleCreateClick}
         >
-          Create Item
-        </StyledButton>
+          Create
+        </StyledButtonCreate>
+        
       </AddBox>
     </div>
+    </>
   );
 };
 

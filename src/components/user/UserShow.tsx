@@ -4,6 +4,8 @@ import styled from "@mui/material/styles/styled";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import AddIcon from '@mui/icons-material/Add';
+
 
 const dummyUsers = [
   {
@@ -68,6 +70,13 @@ const AddBox = styled(Box)({
 
 const StyledButton = styled(Button)({
   margin: "10px",
+  backgroundColor:'white',
+  color:'black',
+ 
+  "&:hover": {
+    backgroundColor: 'white', 
+    color: 'black',
+  },
 });
 
 const UserShowPage: React.FC = () => {
@@ -95,7 +104,8 @@ const UserShowPage: React.FC = () => {
         {/* <CloseButton to="/users">&times;</CloseButton> */}
       </Container>
       <AddBox>
-        <StyledButton variant="contained" onClick={handleEditButton}>
+        <StyledButton variant="contained" onClick={handleEditButton} startIcon={<AddIcon/>}>
+
           Add Item
         </StyledButton>
       </AddBox>

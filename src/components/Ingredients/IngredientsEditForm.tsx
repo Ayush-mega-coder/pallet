@@ -5,7 +5,7 @@
 // }
 // export default IngredientsEditForm;
 
-import React, { useEffect } from "react";
+import React, { useEffect,useCallback } from "react";
 import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import {
   Button,
@@ -20,7 +20,15 @@ import {
 import { styled } from "@mui/material/styles";
 import { useForm, Controller } from "react-hook-form";
 import AsyncCreatableSelect from "react-select/async-creatable";
+import SaveIcon from '@mui/icons-material/Save';
+import AddIcon from '@mui/icons-material/Add';
+import { useDropzone } from "react-dropzone";
+import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
+
+
+
 import { userOptions } from "./data";
+import Add from "@mui/icons-material/Add";
 
 interface Ingredient {
   id: number;
@@ -29,7 +37,7 @@ interface Ingredient {
   quantity: number;
   date: string;
   unit: string;
-  picture: string;
+  picture: File | null;
 }
 
 interface FormValues {
@@ -38,7 +46,7 @@ interface FormValues {
   quantity: number;
   date: string;
   unit: string;
-  picture: string;
+  picture: File | null;
 }
 
 interface IngredientsEditFormProps {
@@ -54,6 +62,13 @@ const AddBox = styled(Box)({
 
 const StyledButton = styled(Button)({
   margin: "10px",
+  backgroundColor:'white',
+  color:'black',
+ 
+  "&:hover": {
+    backgroundColor: 'white', 
+    color: 'black',
+  },
 });
 
 const FormContainer = styled("div")({
@@ -76,6 +91,7 @@ const IngredientsEditForm: React.FC<IngredientsEditFormProps> = ({
     handleSubmit,
     control,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<FormValues>();
 
@@ -110,6 +126,21 @@ const IngredientsEditForm: React.FC<IngredientsEditFormProps> = ({
       callback(filterColors(inputValue));
     }, 1000);
   };
+  const handleDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      if (acceptedFiles && acceptedFiles.length > 0) {
+        const selectedFile = acceptedFiles[0];
+        console.log("Selected picture:", selectedFile);
+        setValue("picture", selectedFile); 
+      }
+    },
+    [setValue]
+  );
+  // Hook from react-dropzone to handle file drop and selection
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop: handleDrop,
+
+  });
 
   return (
     <div>
@@ -196,18 +227,22 @@ const IngredientsEditForm: React.FC<IngredientsEditFormProps> = ({
           )}
         />
 
-        <Controller
+<Controller
           name="picture"
           control={control}
-          defaultValue=""
+          defaultValue={null}
           rules={{ required: "Picture is required" }}
-          render={({ field }) => (
-            <TextField
-              label="Picture"
-              {...field}
-              error={!!errors.picture}
-              helperText={errors.picture?.message}
-            />
+          render={() => (
+            <section>
+              <div {...getRootProps()}>
+                <input {...getInputProps()} />
+
+                <StyledButton variant="contained" startIcon={<AddAPhotoIcon/>}>
+
+                  Upload or Drag Pictures
+                </StyledButton>
+              </div>
+            </section>
           )}
         />
       </FormContainer>
@@ -218,13 +253,16 @@ const IngredientsEditForm: React.FC<IngredientsEditFormProps> = ({
           color="primary"
           onClick={handleSubmit(onSubmit)}
         >
+          <SaveIcon/>
           Save
         </StyledButton>
         <StyledButton
           variant="contained"
           color="primary"
           onClick={handleAddMoreButtonClick}
+          startIcon={<AddIcon/>}
         >
+
           Add More
         </StyledButton>
       </AddBox>
