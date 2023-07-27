@@ -15,11 +15,13 @@ import {
   FormControl,
   InputLabel,
   FormHelperText,
+  IconButton,
 } from "@mui/material";
+import { Delete, Edit } from "@mui/icons-material";
 const AddBox = styled(Box)({
   display: "flex",
   justifyContent: "flex-end",
-  marginTop: "50px",
+  marginTop: "38px",
   marginRight: "50px",
 });
 const StyledButton = styled(Button)({
@@ -34,11 +36,11 @@ const StyledButton = styled(Button)({
 const StyledButtonCreate = styled(Button)({
   marginTop: "5px",
 
-  backgroundColor: "white",
+
   color: "black",
 
   "&:hover": {
-    backgroundColor: "white",
+    // backgroundColor: "white",
     color: "black",
   },
 });
@@ -47,6 +49,7 @@ const IngredientsList: React.FC = () => {
 
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const navigate = useNavigate();
+  const [isBulkDeleteVisible, setBulkDeleteVisible] = useState(false);
 
   useEffect(() => {
     // Fetch the list of ingredients here and update the state
@@ -90,64 +93,56 @@ const IngredientsList: React.FC = () => {
 
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 80 },
-    { field: "name", headerName: "Name", width: 150, sortable: true, renderHeader: (params) => {
-      return (
-        <div style={{ cursor: "pointer" }}>
-          {params.colDef.headerName}
-        </div>
-      );
-    }, },
+    {
+      field: "name",
+      headerName: "Name",
+      width: 150,
+      sortable: true,
+      renderHeader: (params) => {
+        return (
+          <div style={{ cursor: "pointer" }}>{params.colDef.headerName}</div>
+        );
+      },
+    },
     { field: "quantity", headerName: "Quantity", width: 100, sortable: true },
     { field: "date", headerName: "Date", width: 140, sortable: true },
     { field: "unit", headerName: "Unit", width: 100, sortable: true },
     { field: "picture", headerName: "Picture", width: 150 },
     {
-      field: "edit",
-      headerName: "Edit",
-      width: 100,
-      sortable: false,
-      renderCell: (params) => (
-        <StyledButtonCreate
-          variant="outlined"
-
-          // onClick={() => handleEditClick(params.id)}
-        >
-          Edit
-        </StyledButtonCreate>
-      ),
-    },
-    {
       field: "delete",
-      headerName: "Delete",
+      headerName: "Actions",
       width: 100,
       sortable: false,
       renderCell: (params) => (
-        <StyledButtonCreate
-        variant="outlined"
-
-          // onClick={() => handleEditClick(params.id)}
-        >
-          Delete
-        </StyledButtonCreate>
+        <Box display="flex" alignItems="center" gap={2}>
+          <IconButton>
+            <Edit />
+          </IconButton>
+          <IconButton onClick={() => handleDeleteClick}>
+            <Delete />
+          </IconButton>
+        </Box>
       ),
     },
   ];
 
   const handleDeleteClick = () => {
-    // const selectedRows = gridApiRef.current?.getSelectedRows();
-    // if (selectedRows) {
-    //   setIngredients((prevIngredients) =>
-    //     prevIngredients.filter((ingredient) => !selectedRows.includes(ingredient))
-    //   );
-    // }
+    // Remove the selected rows from the state
+    setIngredients((prevIngredients) =>
+      prevIngredients.filter(
+        (ingredient) => !selectedRows.includes(ingredient.id)
+      )
+    );
 
-    setIngredients([]);
+    // Clear the selection
+    setSelectedRows([]);
+    setBulkDeleteVisible(false);
   };
   const handleCreateClick = () => {
     navigate("/ingredients/create");
   };
   const handleRowSelectionModelChange = (selection: any) => {
-    setSelectedRows(selection.selectionModel as string[]);
+    setBulkDeleteVisible(true);
   };
   const handleRowClick = (params: any) => {
     const ingredientId = params.id;
@@ -158,10 +153,10 @@ const IngredientsList: React.FC = () => {
   return (
     <>
       <AddBox>
-        {selectedRows && selectedRows.length > 0 && (
-          <StyledButton startIcon={<DeleteIcon />} onClick={handleDeleteClick}>
-            Bulk Delete
-          </StyledButton>
+        {isBulkDeleteVisible && (
+          <IconButton onClick={handleDeleteClick}>
+            <Delete />
+          </IconButton>
         )}
         <StyledButtonCreate startIcon={<AddIcon />} onClick={handleCreateClick}>
           Create
@@ -170,10 +165,14 @@ const IngredientsList: React.FC = () => {
 
       <div
         style={{
-          marginLeft: "220px",
-          marginTop: "5px",
+          marginLeft: "230px",
+          marginTop: "0px",
           height: 300,
           width: "80%",
+          boxShadow: "0px 2px 4px rgba(4, 4, 1, 0.4)",
+
+          // padding: "5px",
+          borderRadius: "8px",
         }}
       >
         <DataGrid

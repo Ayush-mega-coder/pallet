@@ -7,9 +7,8 @@ import Button from "@mui/material/Button";
 import onion from "../../assets/ingredients/onion.png";
 import garlic from "../../assets/ingredients/garlic.png";
 import tomato from "../../assets/ingredients/tomato.png";
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-
+import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
 
 const dummyIngredients = [
   // Your dummy ingredient data here...
@@ -37,7 +36,6 @@ const dummyIngredients = [
     unit: "gm",
     picture: tomato,
   },
-
 ];
 
 const Container = styled(Box)({
@@ -51,9 +49,18 @@ const Container = styled(Box)({
   boxShadow: "0 2px 5px rgba(1, 1, 1, 0.1)",
   maxWidth: "400px",
   // margin: "0 auto",
-  marginTop:'100px',
-  marginLeft:'390px',
+  // marginTop: "1px",
+  marginLeft: "400px",
   backgroundColor: "#fff",
+});
+const AddBox = styled(Box)({
+  maxWidth: "400px",
+  display: "flex",
+  justifyContent: "flex-end", // Updated to place buttons at the right-top corner
+  alignItems: "center",
+
+  marginTop: "80px",
+  marginLeft: "440px",
 });
 
 const Title = styled(Typography)({
@@ -84,19 +91,16 @@ const CloseButton = styled(Link)({
   fontSize: "20px",
   marginLeft: "auto",
 });
-const AddBox = styled(Box)({
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-});
+
+
 const StyledButton = styled(Button)({
   margin: "10px",
-  backgroundColor:'white',
-  color:'black',
- 
+  backgroundColor: "white",
+  color: "black",
+
   "&:hover": {
-    backgroundColor: 'white', 
-    color: 'black',
+    backgroundColor: "white",
+    color: "black",
   },
 });
 
@@ -118,39 +122,34 @@ const IngredientShowPage: React.FC = () => {
 
   return (
     <>
-      <Container>
-        <Title variant="h2">{ingredient.name}</Title>
-        <Quantity>
-          Quantity: {ingredient.quantity} {ingredient.unit}
-        </Quantity>
-        <Date>Date: {ingredient.date}</Date>
-
-        <Image src={ingredient.picture} alt={ingredient.name} />
-
-
-        {/* <CloseButton to="/ingredients">&times;</CloseButton> */}
-      </Container>
-      <AddBox>
-        <StyledButton  onClick={handleAddButton} startIcon={<AddIcon />}>
-          
+      
+        
+          <AddBox>
+        <StyledButton onClick={handleAddButton} startIcon={<AddIcon />}>
           Add Item
         </StyledButton>
-        <StyledButton  onClick={handleEditButton} startIcon={<EditIcon />}>
-
-          
+        <StyledButton onClick={handleEditButton} startIcon={<EditIcon />}>
           Edit Item
         </StyledButton>
-      </AddBox>
+        </AddBox>
+        <Container>
+          <Title variant="h2">{ingredient.name}</Title>
+          <Quantity>
+            Quantity: {ingredient.quantity} {ingredient.unit}
+          </Quantity>
+          <Date>Date: {ingredient.date}</Date>
+
+          <Image src={ingredient.picture} alt={ingredient.name} />
+
+          {/* <CloseButton to="/ingredients">&times;</CloseButton> */}
+        </Container>
+      
+
     </>
   );
 };
 
 export default IngredientShowPage;
-
-
-
-
-
 
 // import React, { useCallback } from "react";
 // import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
@@ -248,7 +247,6 @@ export default IngredientShowPage;
 //     },
 //     [setValue]
 //   );
-
 
 //   // Hook from react-dropzone to handle file drop and selection
 //   const { getRootProps, getInputProps } = useDropzone({

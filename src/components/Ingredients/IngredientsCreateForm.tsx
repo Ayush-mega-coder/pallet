@@ -1,4 +1,4 @@
-import React, { useCallback,useState } from "react";
+import React, { useCallback, useState } from "react";
 import { styled } from "@mui/material/styles";
 import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import {
@@ -12,7 +12,7 @@ import {
   FormHelperText,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
-import AsyncCreatableSelect from "react-select/async-creatable";
+import AsyncSelect from "react-select/async";
 import AddIcon from "@mui/icons-material/Add";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import { userOptions } from "./data";
@@ -22,7 +22,8 @@ import { makeStyles } from "@mui/styles";
 const useStyles = makeStyles((theme) => ({
   container: {
     // margin: "20px",
-    marginTop: "100px",
+    marginTop: "60px",
+    marginLeft: "100px",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -40,11 +41,11 @@ const useStyles = makeStyles((theme) => ({
     margin: "10px",
     display: "flex",
 
-    justifyContent: "space-between",
+    
   },
   button: {
-    margin: "10px",
-
+    margin: "5px",
+    border: "2px solid blue",
     color: "black",
     "&:hover": {
       backgroundColor: "white",
@@ -52,32 +53,37 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   button1: {
-    marginTop:'-50px',
-    marginLeft: "310px", // Move the button to the right-bottom
+    // Move the button to the right-bottom
+
     color: "black",
+    backgroundColor: "white",
     "&:hover": {
       backgroundColor: "white",
       color: "black",
     },
   },
   button2: {
-    marginTop:'-50px',
 
-    marginLeft: "430px",
-    color: "black",
-    "&:hover": {
-      backgroundColor: "white",
-      color: "black",
-    },
+    backgroundColor: "#002D62",
+
+    color: "white",
+    
   },
-  users:{
-    zIndex:100,
+  boxItem: {
+    marginTop:'-40px',
+    display: "flex",
+    justifyContent: "space-between",
+    width:'550px',
+  },
+
+  users: {
+    zIndex: 100,
   },
   inputLabel: {
     // You can add any custom styles for InputLabel here
   },
 }));
-const StyledAsyncCreatableSelect = styled(AsyncCreatableSelect)({
+const StyledAsyncSelect = styled(AsyncSelect)({
   width: "50%",
   // Add other styles here to match the TextField
   // For example: fontFamily, fontSize, padding, etc.
@@ -118,7 +124,6 @@ const IngredientsCreateForm: React.FC = () => {
     setIsDragging(true);
   }, []);
 
-
   const handleAddMoreButtonClick = () => {
     console.log("val");
   };
@@ -139,7 +144,7 @@ const IngredientsCreateForm: React.FC = () => {
   };
   const handleDrop = useCallback(
     (acceptedFiles: File[]) => {
-      setIsDragging(false); 
+      setIsDragging(false);
       if (acceptedFiles && acceptedFiles.length > 0) {
         const selectedFile = acceptedFiles[0];
         console.log("Selected picture:", selectedFile);
@@ -152,7 +157,7 @@ const IngredientsCreateForm: React.FC = () => {
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: handleDrop,
     onDragEnter: handleDragEnter, // Add the drag enter event handler
-    onDragLeave: () => setIsDragging(false), 
+    onDragLeave: () => setIsDragging(false),
   });
 
   return (
@@ -163,9 +168,8 @@ const IngredientsCreateForm: React.FC = () => {
           control={control}
           defaultValue=""
           rules={{ required: "User ID is required" }}
-
           render={({ field }) => (
-            <StyledAsyncCreatableSelect
+            <StyledAsyncSelect
               cacheOptions
               defaultOptions
               loadOptions={loadOptions}
@@ -176,7 +180,7 @@ const IngredientsCreateForm: React.FC = () => {
           )}
         />
 
-        <Controller 
+        <Controller
           name="name"
           control={control}
           defaultValue=""
@@ -187,7 +191,6 @@ const IngredientsCreateForm: React.FC = () => {
               {...field}
               error={!!errors.name}
               helperText={errors.name?.message}
-              
             />
           )}
         />
@@ -255,7 +258,9 @@ const IngredientsCreateForm: React.FC = () => {
               <div
                 {...getRootProps()}
                 style={{
-                  border: isDragging ? "2px dashed blue" : "2px solid transparent",
+                  border: isDragging
+                    ? "2px dashed blue"
+                    : "2px solid transparent",
                   padding: "10px",
                   borderRadius: "4px",
                   display: "flex",
@@ -274,22 +279,16 @@ const IngredientsCreateForm: React.FC = () => {
             </section>
           )}
         />
-      </div>
-      <Button
-        onClick={handleSubmit(onSubmit)}
-        startIcon={<AddIcon />}
-        className={classes.button1}
-      >
-        Save
-      </Button>
+        <Box className={classes.boxItem}>
+          <Button className={classes.button2} onClick={handleSubmit(onSubmit)} startIcon={<AddIcon /> }>
+            Save
+          </Button>
 
-      <Button
-        onClick={handleSubmit(onSubmit)}
-        startIcon={<AddIcon />}
-        className={classes.button2}
-      >
-        Add Item
-      </Button>
+          <Button className={classes.button1} onClick={handleSubmit(onSubmit)} startIcon={<AddIcon /> }>
+            Add Item
+          </Button>
+        </Box>
+      </div>
     </div>
   );
 };

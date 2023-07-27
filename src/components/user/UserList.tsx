@@ -3,10 +3,18 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
+import { Typography } from "@mui/material";
+import styled from "@emotion/styled";
+
+const TypographyUser = styled(Typography)({
+  margin:'10px',
+  fontWeight: "bold",
+})
 
 const UserList: React.FC = () => {
   const [users, setUsers] = useState<any[]>([]);
   const navigate = useNavigate();
+  
 
   useEffect(() => {
     // Fetch the list of users here and update the state
@@ -29,6 +37,8 @@ const UserList: React.FC = () => {
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 100 },
     { field: "name", headerName: "Name", width: 200, sortable: true },
+    { field: "email", headerName: "Email", width: 200, sortable: true },
+    { field: "age", headerName: "Age", width: 200, sortable: true },
   ];
 
   const handleDeleteClick = () => {
@@ -40,18 +50,18 @@ const UserList: React.FC = () => {
   };
 
   return (
-    <div style={{ marginLeft:'220px', marginTop:'70px', height: 300, width: "80%" }}>
+    <div style={{ marginLeft:'250px', marginTop:'70px' }}>
+      <TypographyUser>
+        Users
+      </TypographyUser>
+    <div style={{ height: 300, width: "95%",boxShadow: '0px 2px 4px rgba(4, 4, 1, 0.4)',borderRadius: "8px", }}>
       <DataGrid
         columns={columns}
         rows={users}
-
         pagination
-        
         onRowClick={handleRowClick}
       />
-      {/* <Button variant="contained" color="secondary" startIcon={<DeleteIcon />} onClick={handleDeleteClick}>
-        Bulk Delete
-      </Button> */}
+      </div>
     </div>
   );
 };

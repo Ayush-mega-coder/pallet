@@ -6,26 +6,21 @@ import {
   Typography,
   Avatar,
   Box,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { styled } from "@mui/material/styles";
-import { Theme } from "@mui/material/styles";
 import Sidebar from "./Sidebar";
+import Login from "./Login"; // Import your Login component here
 
-// const StyledAppBar = styled(AppBar)(({ theme: Theme }) => ({
-//   zIndex: Theme.zIndex.drawer + 1,
-//   backgroundColor: Theme.palette.common.white,
-//   color: Theme.palette.common.black,
-
-
-// }));
 const StyledAppBar = styled(AppBar)({
-  background:'#002D62',
+  background: "#002D62",
   zIndex: 1300,
-  width:'100%',
-  color:'white',
-  height:'57px'
-})
+  width: "100%",
+  color: "white",
+  height: "57px",
+});
 
 const HeaderContainer = styled(Box)({
   width: "400px",
@@ -38,9 +33,10 @@ const HeaderContainer = styled(Box)({
   fontSize: "40px",
 });
 
-
 const Header: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [showLoginPopup, setShowLoginPopup] = useState(false); // Track login popup visibility
 
   const handleSidebarOpen = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -48,6 +44,22 @@ const Header: React.FC = () => {
 
   const handleSidebarClose = () => {
     setIsSidebarOpen(false);
+  };
+
+  const handleAvatarClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    // Add your logout logic here
+    // For example, call an API to logout the user and clear the session
+    // After logout, show the login popup
+    handleMenuClose();
+    setShowLoginPopup(true);
   };
 
   return (
@@ -70,15 +82,28 @@ const Header: React.FC = () => {
           <Avatar
             alt="User Profile"
             src="/path/to/profile-image.jpg"
-            sx={{ marginLeft: 2 }}
-            
+            sx={{ marginLeft: 2, cursor: "pointer" }}
+            onClick={handleAvatarClick}
           />
         </Toolbar>
       </StyledAppBar>
 
       <Sidebar onClose={handleSidebarClose} />
 
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+      >
+        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+      </Menu>
 
+      {showLoginPopup && (
+        <Login
+          showPopup={true}
+          onLoginSuccess={() => setShowLoginPopup(false)}
+        />
+      )}
     </>
   );
 };

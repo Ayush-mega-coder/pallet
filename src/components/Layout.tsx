@@ -36,11 +36,11 @@ const Layout: React.FC<PropsWithChildren> = (props) => {
   return (
     <>
         <Header />
-        {/* showLoginPopup && (
+        showLoginPopup && (
           <Login
             showPopup={showLoginPopup}
             onLoginSuccess={handleLoginSuccess}
-          /> */}
+          />
         )
           {props.children}
           

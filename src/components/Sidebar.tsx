@@ -84,12 +84,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
           </ListItemIcon>
           <ListItemText primary="Ingredients" />
         </SidebarItem>
-        <SidebarItem selected={selectedItem === "logout"}>
-          <ListItemIcon>
-            <LogoutIcon />
-          </ListItemIcon>
-          <ListItemText primary="Logout" />
-        </SidebarItem>
+      
       </SidebarList>
     </SidebarContainer>
   );
