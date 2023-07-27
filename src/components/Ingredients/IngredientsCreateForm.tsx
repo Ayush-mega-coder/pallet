@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback,useState } from "react";
 import { styled } from "@mui/material/styles";
 import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import {
@@ -22,7 +22,7 @@ import { makeStyles } from "@mui/styles";
 const useStyles = makeStyles((theme) => ({
   container: {
     // margin: "20px",
-    marginTop:'100px',
+    marginTop: "100px",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -30,29 +30,48 @@ const useStyles = makeStyles((theme) => ({
     gap: "20px",
     "& .MuiTextField-root, & .MuiFormControl-root": {
       width: "50%",
-      
     },
   },
-  
+
   formControl: {
     width: "50%",
-
   },
   box: {
-
-    margin:'10px',
+    margin: "10px",
     display: "flex",
 
     justifyContent: "space-between",
   },
   button: {
     margin: "10px",
-    backgroundColor: "red",
+
     color: "black",
     "&:hover": {
       backgroundColor: "white",
       color: "black",
     },
+  },
+  button1: {
+    marginTop:'-50px',
+    marginLeft: "310px", // Move the button to the right-bottom
+    color: "black",
+    "&:hover": {
+      backgroundColor: "white",
+      color: "black",
+    },
+  },
+  button2: {
+    marginTop:'-50px',
+
+    marginLeft: "430px",
+    color: "black",
+    "&:hover": {
+      backgroundColor: "white",
+      color: "black",
+    },
+  },
+  users:{
+    zIndex:100,
   },
   inputLabel: {
     // You can add any custom styles for InputLabel here
@@ -74,6 +93,7 @@ interface FormValues {
 
 const IngredientsCreateForm: React.FC = () => {
   const classes = useStyles();
+  const [isDragging, setIsDragging] = useState(false);
 
   const {
     handleSubmit,
@@ -94,6 +114,10 @@ const IngredientsCreateForm: React.FC = () => {
       picture: null,
     });
   };
+  const handleDragEnter = useCallback(() => {
+    setIsDragging(true);
+  }, []);
+
 
   const handleAddMoreButtonClick = () => {
     console.log("val");
@@ -115,6 +139,7 @@ const IngredientsCreateForm: React.FC = () => {
   };
   const handleDrop = useCallback(
     (acceptedFiles: File[]) => {
+      setIsDragging(false); 
       if (acceptedFiles && acceptedFiles.length > 0) {
         const selectedFile = acceptedFiles[0];
         console.log("Selected picture:", selectedFile);
@@ -126,28 +151,32 @@ const IngredientsCreateForm: React.FC = () => {
   // Hook from react-dropzone to handle file drop and selection
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: handleDrop,
+    onDragEnter: handleDragEnter, // Add the drag enter event handler
+    onDragLeave: () => setIsDragging(false), 
   });
 
   return (
     <div>
       <div className={classes.container}>
-      <Controller
-  name="userId"
-  control={control}
-  defaultValue=""
-  rules={{ required: "User ID is required" }}
-  render={({ field }) => (
-    <StyledAsyncCreatableSelect
-      cacheOptions
-      defaultOptions
-      loadOptions={loadOptions}
-      {...field}
-      placeholder="UserID"
-    />
-  )}
-/>
-
         <Controller
+          name="userId"
+          control={control}
+          defaultValue=""
+          rules={{ required: "User ID is required" }}
+
+          render={({ field }) => (
+            <StyledAsyncCreatableSelect
+              cacheOptions
+              defaultOptions
+              loadOptions={loadOptions}
+              {...field}
+              placeholder="UserID"
+              className={classes.users}
+            />
+          )}
+        />
+
+        <Controller 
           name="name"
           control={control}
           defaultValue=""
@@ -158,6 +187,7 @@ const IngredientsCreateForm: React.FC = () => {
               {...field}
               error={!!errors.name}
               helperText={errors.name?.message}
+              
             />
           )}
         />
@@ -213,7 +243,6 @@ const IngredientsCreateForm: React.FC = () => {
             />
           )}
         />
-   
 
         <Controller
           name="picture"
@@ -222,12 +251,22 @@ const IngredientsCreateForm: React.FC = () => {
           rules={{ required: "Picture is required" }}
           render={() => (
             <section>
-              <div {...getRootProps()}>
+              {/* Apply the border style when a file is being dragged */}
+              <div
+                {...getRootProps()}
+                style={{
+                  border: isDragging ? "2px dashed blue" : "2px solid transparent",
+                  padding: "10px",
+                  borderRadius: "4px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
                 <input {...getInputProps()} />
-
                 <Button
                   startIcon={<AddAPhotoIcon />}
-                  // className={classes.button}
+                  className={classes.button}
                 >
                   Upload or Drag Pictures
                 </Button>
@@ -235,24 +274,22 @@ const IngredientsCreateForm: React.FC = () => {
             </section>
           )}
         />
-      <Box mt={2} className={classes.box}>
-        <Button
-          onClick={handleSubmit(onSubmit)}
-          startIcon={<AddIcon />}
-          className={classes.button}
-        >
-          Save
-        </Button>
-        <Button
-          onClick={handleSubmit(onSubmit)}
-          startIcon={<AddIcon />}
-          className={classes.button}
-        >
-          Add Item
-        </Button>
-      </Box>
       </div>
+      <Button
+        onClick={handleSubmit(onSubmit)}
+        startIcon={<AddIcon />}
+        className={classes.button1}
+      >
+        Save
+      </Button>
 
+      <Button
+        onClick={handleSubmit(onSubmit)}
+        startIcon={<AddIcon />}
+        className={classes.button2}
+      >
+        Add Item
+      </Button>
     </div>
   );
 };

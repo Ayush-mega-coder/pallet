@@ -38,7 +38,9 @@ const Container = styled(Box)({
   borderRadius: "5px",
   boxShadow: "0 2px 5px rgba(1, 1, 1, 0.1)",
   maxWidth: "400px",
-  margin: "0 auto",
+
+  marginTop:'100px',
+  marginLeft:'390px',
   height: "200px",
   backgroundColor: "#fff",
 });
@@ -104,7 +106,7 @@ const UserShowPage: React.FC = () => {
         {/* <CloseButton to="/users">&times;</CloseButton> */}
       </Container>
       <AddBox>
-        <StyledButton variant="contained" onClick={handleEditButton} startIcon={<AddIcon/>}>
+        <StyledButton  onClick={handleEditButton} startIcon={<AddIcon/>}>
 
           Add Item
         </StyledButton>

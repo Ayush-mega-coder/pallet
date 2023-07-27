@@ -40,11 +40,11 @@ const UserList: React.FC = () => {
   };
 
   return (
-    <div style={{ marginLeft:'220px', marginTop:'100px', height: 300, width: "80%" }}>
+    <div style={{ marginLeft:'220px', marginTop:'70px', height: 300, width: "80%" }}>
       <DataGrid
         columns={columns}
         rows={users}
-        checkboxSelection
+
         pagination
         
         onRowClick={handleRowClick}

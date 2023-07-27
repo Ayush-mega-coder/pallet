@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { styled } from "@mui/material/styles";
 
-import AddIcon from '@mui/icons-material/Add';
+import AddIcon from "@mui/icons-material/Add";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
@@ -20,33 +20,32 @@ const AddBox = styled(Box)({
   display: "flex",
   justifyContent: "flex-end",
   marginTop: "50px",
-  marginRight:"50px"
+  marginRight: "50px",
 });
 const StyledButton = styled(Button)({
-
   margin: "10px",
-  backgroundColor:'white',
-  color:'black',
+  backgroundColor: "white",
+  color: "black",
   "&:hover": {
-    backgroundColor: 'white', 
-    color: 'black', 
+    backgroundColor: "white",
+    color: "black",
   },
-
 });
 const StyledButtonCreate = styled(Button)({
+  marginTop: "5px",
 
-  margin: "10px",
+  backgroundColor: "white",
+  color: "black",
 
-  backgroundColor:'white',
-  color:'black',
- 
   "&:hover": {
-    backgroundColor: 'white', 
-    color: 'black',
+    backgroundColor: "white",
+    color: "black",
   },
 });
 const IngredientsList: React.FC = () => {
   const [ingredients, setIngredients] = useState<any[]>([]);
+
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -90,12 +89,48 @@ const IngredientsList: React.FC = () => {
   }, []);
 
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 100 },
-    { field: "name", headerName: "Name", width: 200, sortable: true },
-    { field: "quantity", headerName: "Quantity", width: 150, sortable: true },
-    { field: "date", headerName: "Date", width: 150, sortable: true },
-    { field: "unit", headerName: "Unit", width: 150, sortable: true },
+    { field: "id", headerName: "ID", width: 80 },
+    { field: "name", headerName: "Name", width: 150, sortable: true, renderHeader: (params) => {
+      return (
+        <div style={{ cursor: "pointer" }}>
+          {params.colDef.headerName}
+        </div>
+      );
+    }, },
+    { field: "quantity", headerName: "Quantity", width: 100, sortable: true },
+    { field: "date", headerName: "Date", width: 140, sortable: true },
+    { field: "unit", headerName: "Unit", width: 100, sortable: true },
     { field: "picture", headerName: "Picture", width: 150 },
+    {
+      field: "edit",
+      headerName: "Edit",
+      width: 100,
+      sortable: false,
+      renderCell: (params) => (
+        <StyledButtonCreate
+          variant="outlined"
+
+          // onClick={() => handleEditClick(params.id)}
+        >
+          Edit
+        </StyledButtonCreate>
+      ),
+    },
+    {
+      field: "delete",
+      headerName: "Delete",
+      width: 100,
+      sortable: false,
+      renderCell: (params) => (
+        <StyledButtonCreate
+        variant="outlined"
+
+          // onClick={() => handleEditClick(params.id)}
+        >
+          Delete
+        </StyledButtonCreate>
+      ),
+    },
   ];
 
   const handleDeleteClick = () => {
@@ -111,47 +146,45 @@ const IngredientsList: React.FC = () => {
   const handleCreateClick = () => {
     navigate("/ingredients/create");
   };
+  const handleRowSelectionModelChange = (selection: any) => {
+    setSelectedRows(selection.selectionModel as string[]);
+  };
   const handleRowClick = (params: any) => {
     const ingredientId = params.id;
+
     navigate(`/ingredients/${ingredientId}`);
   };
 
   return (
     <>
-     <AddBox>
-        <StyledButton
-          variant="contained"
-          startIcon={<DeleteIcon />}
-          onClick={handleDeleteClick}
-        >
-          Bulk Delete
-        </StyledButton>
-        <StyledButtonCreate
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={handleCreateClick}
-        >
+      <AddBox>
+        {selectedRows && selectedRows.length > 0 && (
+          <StyledButton startIcon={<DeleteIcon />} onClick={handleDeleteClick}>
+            Bulk Delete
+          </StyledButton>
+        )}
+        <StyledButtonCreate startIcon={<AddIcon />} onClick={handleCreateClick}>
           Create
         </StyledButtonCreate>
-        
       </AddBox>
-    
-    <div style={{ marginLeft:'220px',marginTop:'10px',height: 300, width: "80%" }}>
-      <DataGrid
-        columns={columns}
-        rows={ingredients}
-        checkboxSelection
-        pagination
-        // sortModel={[
-        //   {
-        //     field: "name",
-        //     sort: "asc",
-        //   },
-        // ]}
-        onRowClick={handleRowClick}
-      />
-     
-    </div>
+
+      <div
+        style={{
+          marginLeft: "220px",
+          marginTop: "5px",
+          height: 300,
+          width: "80%",
+        }}
+      >
+        <DataGrid
+          columns={columns}
+          rows={ingredients}
+          checkboxSelection
+          pagination
+          onRowClick={handleRowClick}
+          onRowSelectionModelChange={handleRowSelectionModelChange}
+        />
+      </div>
     </>
   );
 };

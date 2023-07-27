@@ -5,7 +5,7 @@
 // }
 // export default IngredientsEditForm;
 
-import React, { useEffect,useCallback } from "react";
+import React, { useEffect, useCallback } from "react";
 import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import {
   Button,
@@ -20,12 +20,10 @@ import {
 import { styled } from "@mui/material/styles";
 import { useForm, Controller } from "react-hook-form";
 import AsyncCreatableSelect from "react-select/async-creatable";
-import SaveIcon from '@mui/icons-material/Save';
-import AddIcon from '@mui/icons-material/Add';
+import SaveIcon from "@mui/icons-material/Save";
+import AddIcon from "@mui/icons-material/Add";
 import { useDropzone } from "react-dropzone";
-import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
-
-
+import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 
 import { userOptions } from "./data";
 import Add from "@mui/icons-material/Add";
@@ -62,25 +60,31 @@ const AddBox = styled(Box)({
 
 const StyledButton = styled(Button)({
   margin: "10px",
-  backgroundColor:'white',
-  color:'black',
- 
+  backgroundColor: "white",
+  color: "black",
+
   "&:hover": {
-    backgroundColor: 'white', 
-    color: 'black',
+    backgroundColor: "white",
+    color: "black",
   },
 });
 
 const FormContainer = styled("div")({
-  margin: "20px",
+  marginTop: "100px",
+  marginLeft: "30px",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
   gap: "20px",
   "& .MuiTextField-root, & .MuiFormControl-root": {
-    width: "70%",
+    width: "50%",
   },
+});
+const StyledAsyncCreatableSelect = styled(AsyncCreatableSelect)({
+  width: "50%",
+  // Add other styles here to match the TextField
+  // For example: fontFamily, fontSize, padding, etc.
 });
 
 const IngredientsEditForm: React.FC<IngredientsEditFormProps> = ({
@@ -121,7 +125,10 @@ const IngredientsEditForm: React.FC<IngredientsEditFormProps> = ({
     );
   };
 
-  const loadOptions = (inputValue: string, callback: (options: any) => void) => {
+  const loadOptions = (
+    inputValue: string,
+    callback: (options: any) => void
+  ) => {
     setTimeout(() => {
       callback(filterColors(inputValue));
     }, 1000);
@@ -131,7 +138,7 @@ const IngredientsEditForm: React.FC<IngredientsEditFormProps> = ({
       if (acceptedFiles && acceptedFiles.length > 0) {
         const selectedFile = acceptedFiles[0];
         console.log("Selected picture:", selectedFile);
-        setValue("picture", selectedFile); 
+        setValue("picture", selectedFile);
       }
     },
     [setValue]
@@ -139,7 +146,6 @@ const IngredientsEditForm: React.FC<IngredientsEditFormProps> = ({
   // Hook from react-dropzone to handle file drop and selection
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: handleDrop,
-
   });
 
   return (
@@ -151,12 +157,12 @@ const IngredientsEditForm: React.FC<IngredientsEditFormProps> = ({
           defaultValue=""
           rules={{ required: "User ID is required" }}
           render={({ field }) => (
-            <AsyncCreatableSelect
+            <StyledAsyncCreatableSelect
               cacheOptions
               defaultOptions
               loadOptions={loadOptions}
               {...field}
-              placeholder="Select User ID"
+              placeholder="UserID"
             />
           )}
         />
@@ -191,23 +197,6 @@ const IngredientsEditForm: React.FC<IngredientsEditFormProps> = ({
             />
           )}
         />
-
-        <Controller
-          name="date"
-          control={control}
-          defaultValue={new Date().toISOString().slice(0, 10)}
-          rules={{ required: "Date is required" }}
-          render={({ field }) => (
-            <TextField
-              label="Date"
-              type="date"
-              {...field}
-              error={!!errors.date}
-              helperText={errors.date?.message}
-            />
-          )}
-        />
-
         <Controller
           name="unit"
           control={control}
@@ -226,8 +215,23 @@ const IngredientsEditForm: React.FC<IngredientsEditFormProps> = ({
             </FormControl>
           )}
         />
+        <Controller
+          name="date"
+          control={control}
+          defaultValue={new Date().toISOString().slice(0, 10)}
+          rules={{ required: "Date is required" }}
+          render={({ field }) => (
+            <TextField
+              label="Date"
+              type="date"
+              {...field}
+              error={!!errors.date}
+              helperText={errors.date?.message}
+            />
+          )}
+        />
 
-<Controller
+        <Controller
           name="picture"
           control={control}
           defaultValue={null}
@@ -237,8 +241,7 @@ const IngredientsEditForm: React.FC<IngredientsEditFormProps> = ({
               <div {...getRootProps()}>
                 <input {...getInputProps()} />
 
-                <StyledButton variant="contained" startIcon={<AddAPhotoIcon/>}>
-
+                <StyledButton startIcon={<AddAPhotoIcon />}>
                   Upload or Drag Pictures
                 </StyledButton>
               </div>
@@ -248,21 +251,15 @@ const IngredientsEditForm: React.FC<IngredientsEditFormProps> = ({
       </FormContainer>
 
       <AddBox mt={2}>
-        <StyledButton
-          variant="contained"
-          color="primary"
-          onClick={handleSubmit(onSubmit)}
-        >
-          <SaveIcon/>
+        <StyledButton color="primary" onClick={handleSubmit(onSubmit)}>
+          <SaveIcon />
           Save
         </StyledButton>
         <StyledButton
-          variant="contained"
           color="primary"
           onClick={handleAddMoreButtonClick}
-          startIcon={<AddIcon/>}
+          startIcon={<AddIcon />}
         >
-
           Add More
         </StyledButton>
       </AddBox>

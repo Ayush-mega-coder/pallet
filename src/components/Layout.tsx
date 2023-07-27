@@ -40,8 +40,8 @@ const Layout: React.FC<PropsWithChildren> = (props) => {
           <Login
             showPopup={showLoginPopup}
             onLoginSuccess={handleLoginSuccess}
-          />
-        ) */}
+          /> */}
+        )
           {props.children}
           
     </>

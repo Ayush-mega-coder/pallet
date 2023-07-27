@@ -71,11 +71,12 @@ const Header: React.FC = () => {
             alt="User Profile"
             src="/path/to/profile-image.jpg"
             sx={{ marginLeft: 2 }}
+            
           />
         </Toolbar>
       </StyledAppBar>
 
-      <Sidebar open={isSidebarOpen} onClose={handleSidebarClose} />
+      <Sidebar onClose={handleSidebarClose} />
 
 
     </>

@@ -50,7 +50,9 @@ const Container = styled(Box)({
   borderRadius: "5px",
   boxShadow: "0 2px 5px rgba(1, 1, 1, 0.1)",
   maxWidth: "400px",
-  margin: "0 auto",
+  // margin: "0 auto",
+  marginTop:'100px',
+  marginLeft:'390px',
   backgroundColor: "#fff",
 });
 
@@ -73,7 +75,7 @@ const Unit = styled(Typography)({
 
 const Image = styled("img")({
   maxWidth: "100%",
-  height: "300px",
+  height: "200px",
   marginTop: "10px",
 });
 
@@ -129,11 +131,11 @@ const IngredientShowPage: React.FC = () => {
         {/* <CloseButton to="/ingredients">&times;</CloseButton> */}
       </Container>
       <AddBox>
-        <StyledButton variant="contained" onClick={handleAddButton} startIcon={<AddIcon />}>
+        <StyledButton  onClick={handleAddButton} startIcon={<AddIcon />}>
           
           Add Item
         </StyledButton>
-        <StyledButton variant="contained" onClick={handleEditButton} startIcon={<EditIcon />}>
+        <StyledButton  onClick={handleEditButton} startIcon={<EditIcon />}>
 
           
           Edit Item
