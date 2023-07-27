@@ -239,6 +239,7 @@ const IngredientsEditForm: React.FC<IngredientsEditFormProps> = ({
           render={() => (
             <section>
               <div {...getRootProps()}>
+                
                 <input {...getInputProps()} />
 
                 <StyledButton startIcon={<AddAPhotoIcon />}>
@@ -246,6 +247,7 @@ const IngredientsEditForm: React.FC<IngredientsEditFormProps> = ({
                 </StyledButton>
               </div>
             </section>
+            
           )}
         />
       </FormContainer>

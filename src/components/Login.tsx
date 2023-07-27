@@ -42,6 +42,7 @@ const LoginContainer = styled(DialogContent)({
   padding: "20px",
   borderRadius: "8px",
   boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+
 });
 const LoginText = styled(DialogTitle)({
   margin: "1px",
@@ -51,13 +52,13 @@ const LoginText = styled(DialogTitle)({
   alignItems: "center",
 });
 const StyledButton = styled(Button)({
-  backgroundColor: "white",
-  color: "black",
+  backgroundColor: "#002D62",
+  color: "white",
 
-  "&:hover": {
-    backgroundColor: "white",
-    color: "black",
-  },
+  // "&:hover": {
+  //   backgroundColor: "white",
+  //   color: "black",
+  // },
 });
 
 const BlueCircularProgress = styled(CircularProgress)({

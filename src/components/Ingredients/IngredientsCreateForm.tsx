@@ -15,6 +15,8 @@ import { useForm, Controller } from "react-hook-form";
 import AsyncSelect from "react-select/async";
 import AddIcon from "@mui/icons-material/Add";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
+import SaveIcon from "@mui/icons-material/Save";
+
 import { userOptions } from "./data";
 import { useDropzone } from "react-dropzone";
 import { makeStyles } from "@mui/styles";
@@ -37,11 +39,9 @@ const useStyles = makeStyles((theme) => ({
   formControl: {
     width: "50%",
   },
-  box: {
+  box: {  
     margin: "10px",
     display: "flex",
-
-    
   },
   button: {
     margin: "5px",
@@ -63,17 +63,15 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   button2: {
-
     backgroundColor: "#002D62",
 
     color: "white",
-    
   },
   boxItem: {
-    marginTop:'-40px',
+    marginTop: "-40px",
     display: "flex",
     justifyContent: "space-between",
-    width:'550px',
+    width: "550px",
   },
 
   users: {
@@ -280,11 +278,19 @@ const IngredientsCreateForm: React.FC = () => {
           )}
         />
         <Box className={classes.boxItem}>
-          <Button className={classes.button2} onClick={handleSubmit(onSubmit)} startIcon={<AddIcon /> }>
+          <Button
+            className={classes.button2}
+            onClick={handleSubmit(onSubmit)}
+            startIcon={<SaveIcon />}
+          >
             Save
           </Button>
 
-          <Button className={classes.button1} onClick={handleSubmit(onSubmit)} startIcon={<AddIcon /> }>
+          <Button
+            className={classes.button1}
+            onClick={handleSubmit(onSubmit)}
+            startIcon={<AddIcon />}
+          >
             Add Item
           </Button>
         </Box>
