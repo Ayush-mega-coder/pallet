@@ -29,15 +29,18 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    // backgroundColor:'red',
     justifyContent: "center",
     gap: "20px",
     "& .MuiTextField-root, & .MuiFormControl-root": {
       width: "50%",
+      
     },
-  },
+  },  
 
   formControl: {
     width: "50%",
+
   },
   box: {  
     margin: "10px",
@@ -66,12 +69,18 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#002D62",
 
     color: "white",
+    "&:hover": {
+      // backgroundColor: "white",
+      color: "black",
+    },
   },
   boxItem: {
-    marginTop: "-40px",
+    // marginTop: "-40px",
     display: "flex",
     justifyContent: "space-between",
-    width: "550px",
+
+    // width: "550px",
+    width: "50%",
   },
 
   users: {

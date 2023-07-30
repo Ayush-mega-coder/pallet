@@ -1,11 +1,10 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import styled from "@mui/material/styles/styled";
+import { makeStyles } from "@mui/styles";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import AddIcon from '@mui/icons-material/Add';
-
 
 const dummyUsers = [
   {
@@ -28,60 +27,57 @@ const dummyUsers = [
   },
 ];
 
-const Container = styled(Box)({
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "center",
-  alignItems: "center",
-  padding: "20px",
-  border: "1px solid #ccc",
-  borderRadius: "5px",
-  boxShadow: "0 2px 5px rgba(1, 1, 1, 0.1)",
-  maxWidth: "400px",
-
-  marginTop:'100px',
-  marginLeft:'390px',
-  height: "200px",
-  backgroundColor: "#fff",
-});
-
-const Title = styled(Typography)({
-  color: "#333",
-  marginBottom: "10px",
-});
-
-const Age = styled(Typography)({
-  color: "#555",
-});
-
-const Email = styled(Typography)({
-  color: "#555",
-});
-
-const Image = styled("img")({
-  maxWidth: "100%",
-  height: "300px",
-  marginTop: "10px",
-});
-
-const AddBox = styled(Box)({
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-});
-
-const StyledButton = styled(Button)({
-  margin: "10px",
-  backgroundColor:'white',
-  color:'black',
- 
-  "&:hover": {
-    backgroundColor: 'white', 
-    color: 'black',
+const useStyles = makeStyles((theme) => ({
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: "20px",
+    border: "1px solid #ccc",
+    borderRadius: "5px",
+    boxShadow: "0 2px 5px rgba(1, 1, 1, 0.1)",
+    // maxWidth: "400px",
+    width:'25%',
+    // marginTop: "100px",
+    marginLeft: "37.5%",
+    height: "200px",
+    backgroundColor: "#fff",
   },
-});
+  title: {
+    color: "#333",
+    marginBottom: "10px",
+  },
+  age: {
+    color: "#555",
+  },
+  email: {
+    color: "#555",
+  },
+  image: {
+    maxWidth: "100%",
+    height: "300px",
+    marginTop: "10px",
+  },
+  addBox: {
+    margin:'100px -100px 0 0px',
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  button: {
+    margin: "10px",
+    backgroundColor: "white",
+    color: "black",
+    "&:hover": {
+      backgroundColor: "white",
+      color: "black",
+    },
+  },
+}));
 
-const UserShowPage: React.FC = () => {
+const UserShowPage = () => {
+  const classes = useStyles();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const handleEditButton = () => {
@@ -96,21 +92,26 @@ const UserShowPage: React.FC = () => {
 
   return (
     <>
-      <Container>
-        <Title variant="h3">{user.name}</Title>
-        <Age>Age: {user.age}</Age>
-        <Email>Email: {user.email}</Email>
+      <Box className={classes.addBox}>
+        <Button
+          onClick={handleEditButton}
+          startIcon={<AddIcon />}
+          className={classes.button}
+        >
+          Add Item
+        </Button>
+      </Box>
+      <Box className={classes.container}>
+        <Typography variant="h3" className={classes.title}>
+          {user.name}
+        </Typography>
+        <Typography className={classes.age}>Age: {user.age}</Typography>
+        <Typography className={classes.email}>Email: {user.email}</Typography>
 
         {/* <Image src={user.picture} alt={user.name} /> */}
 
         {/* <CloseButton to="/users">&times;</CloseButton> */}
-      </Container>
-      <AddBox>
-        <StyledButton  onClick={handleEditButton} startIcon={<AddIcon/>}>
-
-          Add Item
-        </StyledButton>
-      </AddBox>
+      </Box>
     </>
   );
 };

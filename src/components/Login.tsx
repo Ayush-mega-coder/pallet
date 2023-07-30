@@ -37,6 +37,7 @@ const theme = createTheme({
 
 const LoginContainer = styled(DialogContent)({
   width: "400px",
+  
   margin: "auto",
   marginTop: "10px",
   padding: "20px",
@@ -108,7 +109,7 @@ const Login: React.FC<LoginProps> = ({ showPopup, onLoginSuccess }) => {
     } else {
       setTimeout(() => {
         setLoading(false);
-        setShowSnackbar(true); // Show the Snackbar when credentials are wrong
+        setShowSnackbar(true); // Show the Snackbar when credentials are  wrong
       }, 1000);
     }
   };
@@ -117,11 +118,7 @@ const Login: React.FC<LoginProps> = ({ showPopup, onLoginSuccess }) => {
     setShowSnackbar(false); // Hide the Snackbar when it is closed by the user
   };
 
-  const handleLogout = () => {
-    setIsLoggedIn(false); // Set isLoggedIn to false when logging out
-    localStorage.setItem(LOGIN_STATUS_KEY, "false"); // Store login status in localStorage
-    navigate("/"); // Redirect to login page when logging out
-  };
+ 
 
   // If already logged in, don't show the login dialog
   if (isLoggedIn) {
@@ -142,10 +139,6 @@ const Login: React.FC<LoginProps> = ({ showPopup, onLoginSuccess }) => {
 
           <Avatar alt="User Profile" src="/path/to/profile-image.jpg" sx={{ marginLeft: 2 }} />
 
-          {/* Logout Button */}
-          <Button color="inherit" onClick={handleLogout}>
-            Logout
-          </Button>
         </Toolbar>
       </AppBar>
 

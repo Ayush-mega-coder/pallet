@@ -37,6 +37,8 @@ const Header: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [showLoginPopup, setShowLoginPopup] = useState(false); // Track login popup visibility
+  const LOGIN_STATUS_KEY = "isLoggedIn";
+
 
   const handleSidebarOpen = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -55,11 +57,12 @@ const Header: React.FC = () => {
   };
 
   const handleLogout = () => {
-    // Add your logout logic here
-    // For example, call an API to logout the user and clear the session
-    // After logout, show the login popup
+
     handleMenuClose();
+    localStorage.setItem(LOGIN_STATUS_KEY, "false"); 
+
     setShowLoginPopup(true);
+    
   };
 
   return (
