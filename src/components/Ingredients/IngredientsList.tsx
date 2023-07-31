@@ -3,6 +3,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { styled } from "@mui/material/styles";
 
 import AddIcon from "@mui/icons-material/Add";
+import axios from "axios";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
@@ -36,7 +37,6 @@ const StyledButton = styled(Button)({
 const StyledButtonCreate = styled(Button)({
   marginTop: "5px",
 
-
   color: "black",
 
   "&:hover": {
@@ -50,49 +50,43 @@ const IngredientsList: React.FC = () => {
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const navigate = useNavigate();
   const [isBulkDeleteVisible, setBulkDeleteVisible] = useState(false);
-
   useEffect(() => {
-    // Fetch the list of ingredients here and update the state
-    // For example:
-    // const fetchIngredients = async () => {
-    //   const response = await fetch("https://api.example.com/ingredients");
-    //   const data = await response.json();
-    //   setIngredients(data);
-    // };
-    // fetchIngredients();
+    const fetchIngredients = async () => {
+      try {
+        const token = document.cookie.replace(
+          /(?:(?:^|.*;\s*)authToken\s*=\s*([^;]*).*$)|^.*$/,
+          "$1"
+        );
 
-    // Dummy data for testing
-    const dummyIngredients = [
-      {
-        id: 1,
-        name: "Garlic",
-        quantity: 100,
-        date: "2023-07-24",
-        unit: "kg",
-        picture: "url_to_picture_1",
-      },
-      {
-        id: 2,
-        name: "Onion",
-        quantity: 200,
-        date: "2023-07-25",
-        unit: "kg",
-        picture: "url_to_picture_2",
-      },
-      {
-        id: 3,
-        name: "Tomato",
-        quantity: 20,
-        date: "2023-07-25",
-        unit: "gm",
-        picture: "url_to_picture_2",
-      },
-    ];
-    setIngredients(dummyIngredients);
+        const response = await axios.get(
+          "https://5c4e-150-129-102-218.ngrok-free.app/api/ingredients",
+          {
+            headers: {
+              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY0YmZkZDg0Y2E0YzM1NTFjOTU2ZTEzZSIsIm5hbWUiOiJzaGEiLCJlbWFpbCI6InNoYW1pbGtvdHRhOTlAZ21haWwuY29tIiwiYWN0aXZlIjp0cnVlLCJwYXNzd29yZCI6IiQyYiQxMiRXTmtLdll3eGxKdkNHRC5lSi5WNFBlY0FqeWR4SVphZmV1VWtNLjlURmNud3RCcXZrckRSNiIsInJvbGUiOiJVU0VSIiwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yNVQxNDozNDo0NC4yMjFaIiwidXBkYXRlZEF0IjoiMjAyMy0wNy0yNVQxNDozNDo0NC4yMjFaIiwiX192IjowfSwiaWF0IjoxNjkwMjk2MzU3fQ.xZn1KSQ6prK6v39xs5iVFgDUAKC1ipHmCmZ6b7K-b6o`,
+              "ngrok-skip-browser-warning": true,
+            },
+          }
+        );
+
+        const data = response.data.data.ingredients;
+        setIngredients(data);
+        // console.log(data);
+        // console.log(ingredients)
+      } catch (error) {
+        console.error("Error fetching ingredients:", error);
+      }
+    };
+
+    fetchIngredients();
   }, []);
+  useEffect(() => {
+    // Log ingredients whenever it changes
+    console.log("data is", ingredients);
+    // console.log(ingredients[0])
+  }, [ingredients]);
 
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 80 },
+    { field: "_id", headerName: "ID", width: 80 },
     {
       field: "name",
       headerName: "Name",
@@ -105,9 +99,9 @@ const IngredientsList: React.FC = () => {
       },
     },
     { field: "quantity", headerName: "Quantity", width: 100, sortable: true },
-    { field: "date", headerName: "Date", width: 140, sortable: true },
-    { field: "unit", headerName: "Unit", width: 100, sortable: true },
-    { field: "picture", headerName: "Picture", width: 150 },
+    { field: "expiry", headerName: "Date", width: 140, sortable: true },
+    { field: "type", headerName: "Unit", width: 100, sortable: true },
+    { field: "image", headerName: "Picture", width: 150 },
     {
       field: "delete",
       headerName: "Actions",
@@ -147,7 +141,7 @@ const IngredientsList: React.FC = () => {
   const handleRowClick = (params: any) => {
     const ingredientId = params.id;
 
-    navigate(`/ingredients/${ingredientId}`);
+    navigate(`/ingredients/${ingredientId}/show`);
   };
 
   return (
@@ -167,7 +161,7 @@ const IngredientsList: React.FC = () => {
         style={{
           marginLeft: "230px",
           marginTop: "0px",
-          height: 300,
+          height: "80%",
           width: "80%",
           boxShadow: "0px 2px 4px rgba(4, 4, 1, 0.4)",
 
@@ -182,6 +176,7 @@ const IngredientsList: React.FC = () => {
           pagination
           onRowClick={handleRowClick}
           onRowSelectionModelChange={handleRowSelectionModelChange}
+          getRowId={(row) => row._id}
         />
       </div>
     </>

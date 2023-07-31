@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState,useEffect} from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import styled from "@mui/material/styles/styled";
 import Box from "@mui/material/Box";
@@ -9,34 +9,9 @@ import garlic from "../../assets/ingredients/garlic.png";
 import tomato from "../../assets/ingredients/tomato.png";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
+import axios from 'axios'
 
-const dummyIngredients = [
-  // Your dummy ingredient data here...
-  {
-    id: 1,
-    name: "Garlic",
-    quantity: 100,
-    date: "2023-07-24",
-    unit: "kg",
-    picture: garlic,
-  },
-  {
-    id: 2,
-    name: "Onion",
-    quantity: 200,
-    date: "2023-07-25",
-    unit: "kg",
-    picture: onion,
-  },
-  {
-    id: 3,
-    name: "Tomato",
-    quantity: 20,
-    date: "2023-07-25",
-    unit: "gm",
-    picture: tomato,
-  },
-];
+
 
 const Container = styled(Box)({
   display: "flex",
@@ -56,7 +31,7 @@ const Container = styled(Box)({
 const AddBox = styled(Box)({
   maxWidth: "400px",
   display: "flex",
-  justifyContent: "flex-end", // Updated to place buttons at the right-top corner
+  justifyContent: "flex-end",
   alignItems: "center",
 
   marginTop: "80px",
@@ -92,7 +67,6 @@ const CloseButton = styled(Link)({
   marginLeft: "auto",
 });
 
-
 const StyledButton = styled(Button)({
   margin: "10px",
   backgroundColor: "white",
@@ -107,6 +81,37 @@ const StyledButton = styled(Button)({
 const IngredientShowPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [ingredient, setIngredient] = useState<any | null>(null);
+
+  useEffect(() => {
+    const fetchIngredient = async () => {
+      try {
+        const token = document.cookie.replace(
+          /(?:(?:^|.*;\s*)authToken\s*=\s*([^;]*).*$)|^.*$/,
+          "$1"
+        );
+
+        const response = await axios.get(
+          `https://5c4e-150-129-102-218.ngrok-free.app/api/ingredients/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY0YzFlYjMyNTg0Mjk4YjUxNjI1YWNkZiIsIm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AcGFsbGF0ZS5jb20iLCJhY3RpdmUiOnRydWUsInBhc3N3b3JkIjoiJDJiJDEyJE9sbHBmSmR3akNHV2F3cnNJeHgwSnVqVUxOZ2NsTXpSejUwVjZwN2V3elFJMERiRTR2LjdtIiwicm9sZSI6IkFETUlOIiwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yMFQxMjoyMjozOC42NThaIiwidXBkYXRlZEF0IjoiMjAyMy0wNy0yMVQwOToyNToyNS4yOTdaIiwiX192IjowfSwiaWF0IjoxNjkwODA2OTk0fQ.7vspbw1A1N019ewYYojPHS8AyMlHzlxk134f_c5GlUI`,
+              "ngrok-skip-browser-warning": true,
+            },
+          }
+        );  
+
+        const data = response.data.data.ingredient; // Assuming the API response returns the ingredient details
+        console.log(data)
+        setIngredient(data);
+      } catch (error) {
+        console.error("Error fetching ingredient:", error);
+      }
+    };
+
+    fetchIngredient();
+  }, [id]);
+
   const handleAddButton = () => {
     navigate("/ingredients/create");
   };
@@ -114,7 +119,7 @@ const IngredientShowPage: React.FC = () => {
     navigate("/ingredients/editForm");
   };
 
-  const ingredient = dummyIngredients.find((item) => item.id.toString() === id);
+
 
   if (!ingredient) {
     return <div>Ingredient not found</div>;
@@ -122,179 +127,27 @@ const IngredientShowPage: React.FC = () => {
 
   return (
     <>
-      
-        
-          <AddBox>
+      <AddBox>
         <StyledButton onClick={handleAddButton} startIcon={<AddIcon />}>
           Add Item
         </StyledButton>
         <StyledButton onClick={handleEditButton} startIcon={<EditIcon />}>
           Edit Item
         </StyledButton>
-        </AddBox>
-        <Container>
-          <Title variant="h2">{ingredient.name}</Title>
-          <Quantity>
-            Quantity: {ingredient.quantity} {ingredient.unit}
-          </Quantity>
-          <Date>Date: {ingredient.date}</Date>
+      </AddBox>
+      <Container>
+        <Title variant="h2">{ingredient.name}</Title>
+        <Quantity>
+          Quantity: {ingredient.quantity} {ingredient.unit}
+        </Quantity>
+        <Date>Expiry: {ingredient.expiry}</Date>
 
-          <Image src={ingredient.picture} alt={ingredient.name} />
+        <Image src={ingredient.picture} alt={ingredient.name} />
 
-          {/* <CloseButton to="/ingredients">&times;</CloseButton> */}
-        </Container>
-      
-
+        {/* <CloseButton to="/ingredients">&times;</CloseButton> */}
+      </Container>
     </>
   );
 };
 
 export default IngredientShowPage;
-
-// import React, { useCallback } from "react";
-// import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
-// import {
-//   Button,
-//   Box,
-//   TextField,
-//   Select,
-//   MenuItem,
-//   FormControl,
-//   InputLabel,
-//   FormHelperText,
-// } from "@mui/material";
-// import { styled } from "@mui/material/styles";
-// import { useForm, Controller } from "react-hook-form";
-// import AsyncCreatableSelect from "react-select/async-creatable";
-// import { userOptions } from "./data";
-// import { useDropzone } from "react-dropzone";
-
-// interface FormValues {
-//   userId: string;
-//   name: string;
-//   quantity: number;
-//   date: string;
-//   unit: string;
-//   picture: File | null; // We will store the picture file here
-// }
-
-// const AddBox = styled(Box)({
-//   display: "flex",
-//   alignItems: "center",
-//   justifyContent: "center",
-// });
-
-// const StyledButton = styled(Button)({
-//   margin: "10px",
-// });
-
-// const FormContainer = styled("div")({
-//   margin: "20px",
-//   display: "flex",
-//   flexDirection: "column",
-//   alignItems: "center",
-//   justifyContent: "center",
-//   gap: "20px",
-//   "& .MuiTextField-root, & .MuiFormControl-root": {
-//     width: "70%",
-//   },
-// });
-
-// const IngredientsCreateForm: React.FC = () => {
-//   const {
-//     handleSubmit,
-//     control,
-//     reset,
-//     formState: { errors },
-//     setValue, // We will use setValue to set the picture file in the form
-//   } = useForm<FormValues>();
-
-//   const onSubmit = (data: FormValues) => {
-//     console.log("Form values:", data);
-//     reset({
-//       ...data,
-//       name: "",
-//       quantity: 0,
-//       date: new Date().toISOString().slice(0, 10),
-//       unit: "",
-//       picture: null,
-//     });
-//   };
-
-//   const handleAddMoreButtonClick = () => {
-//     console.log("val");
-//   };
-
-//   const filterColors = (inputValue: string) => {
-//     return userOptions.filter((i) =>
-//       i.label.toLowerCase().includes(inputValue.toLowerCase())
-//     );
-//   };
-
-//   const loadOptions = (inputValue: string, callback: (options: any) => void) => {
-//     setTimeout(() => {
-//       callback(filterColors(inputValue));
-//     }, 1000);
-//   };
-
-//   const handleDrop = useCallback(
-//     (acceptedFiles: File[]) => {
-//       if (acceptedFiles && acceptedFiles.length > 0) {
-//         const selectedFile = acceptedFiles[0];
-//         console.log("Selected picture:", selectedFile);
-//         setValue("picture", selectedFile); // Set the picture file in the form
-//       }
-//     },
-//     [setValue]
-//   );
-
-//   // Hook from react-dropzone to handle file drop and selection
-//   const { getRootProps, getInputProps } = useDropzone({
-//     onDrop: handleDrop,
-//     // Specify the accepted file types (in this case, images)
-//   });
-
-//   return (
-//     <div>
-//       <FormContainer>
-//         {/* Rest of the form fields (userId, name, quantity, date, unit) */}
-//         {/* ... */}
-//         <Controller
-//           name="picture"
-//           control={control}
-//           defaultValue={null}
-//           rules={{ required: "Picture is required" }}
-//           render={() => (
-//             <section>
-//               <div {...getRootProps()}>
-//                 <input {...getInputProps()} />
-//                 <StyledButton variant="contained">
-//                   Upload or Drag Pictures
-//                 </StyledButton>
-//               </div>
-//             </section>
-//           )}
-//         />
-//       </FormContainer>
-
-//       <AddBox mt={2}>
-//         <StyledButton
-//           variant="contained"
-//           color="primary"
-//           onClick={handleSubmit(onSubmit)}
-//         >
-//           Add Item
-//         </StyledButton>
-//         <StyledButton
-//           variant="contained"
-//           color="primary"
-//           onClick={handleAddMoreButtonClick}
-//         >
-//           Add More
-//         </StyledButton>
-//       </AddBox>
-//     </div>
-//   );
-// };
-
-// export default IngredientsCreateForm;

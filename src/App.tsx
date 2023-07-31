@@ -31,7 +31,7 @@ function App() {
             <Route path="/ingredients">
               <Route path="" element={<IngredientsList />} />
               <Route path="create" element={<IngredientsCreateForm />} />
-              <Route path=":id" element={<IngredientsShow />} />
+              <Route path=":id/show" element={<IngredientsShow />} />
               <Route path="show" element={<IngredientsShow />} />
               <Route
                 path="editForm"
@@ -47,7 +47,7 @@ function App() {
           <Route>
             <Route path="/user">
               <Route path="" element={<UserList />} />
-              <Route path=":id" element={<UserShow />} />
+              <Route path=":id/show" element={<UserShow />} />
             </Route>
           </Route>
         </Routes>

@@ -49,7 +49,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
   const [selectedItem, setSelectedItem] = useState("");
 
   const handleDashboardClick = () => {
-    navigate("/admin");
+    navigate("/");
     setSelectedItem("dashboard");
   };
 

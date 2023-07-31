@@ -16,7 +16,9 @@ import AsyncSelect from "react-select/async";
 import AddIcon from "@mui/icons-material/Add";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import SaveIcon from "@mui/icons-material/Save";
-
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
+import axios from "axios"; 
 import { userOptions } from "./data";
 import { useDropzone } from "react-dropzone";
 import { makeStyles } from "@mui/styles";
@@ -34,15 +36,13 @@ const useStyles = makeStyles((theme) => ({
     gap: "20px",
     "& .MuiTextField-root, & .MuiFormControl-root": {
       width: "50%",
-      
     },
-  },  
+  },
 
   formControl: {
     width: "50%",
-
   },
-  box: {  
+  box: {
     margin: "10px",
     display: "flex",
   },
@@ -50,29 +50,29 @@ const useStyles = makeStyles((theme) => ({
     margin: "5px",
     border: "2px solid blue",
     color: "black",
-    "&:hover": {
-      backgroundColor: "white",
-      color: "black",
-    },
+    // "&:hover": {
+    //   backgroundColor: "white",
+    //   color: "black",
+    // },
   },
   button1: {
     // Move the button to the right-bottom
 
     color: "black",
     backgroundColor: "white",
-    "&:hover": {
-      backgroundColor: "white",
-      color: "black",
-    },
+    // "&:hover": {
+    //   backgroundColor: "white",
+    //   color: "black",
+    // },
   },
   button2: {
     backgroundColor: "#002D62",
-
     color: "white",
     "&:hover": {
-      // backgroundColor: "white",
-      color: "black",
+      backgroundColor: "#002D62",
+      color: "white",
     },
+  
   },
   boxItem: {
     // marginTop: "-40px",
@@ -86,14 +86,14 @@ const useStyles = makeStyles((theme) => ({
   users: {
     zIndex: 100,
   },
-  inputLabel: {
-    // You can add any custom styles for InputLabel here
+  alert:{
+    marginLeft:'530px',
+    backgroundColor:'#002D62',
   },
+  inputLabel: {},
 }));
 const StyledAsyncSelect = styled(AsyncSelect)({
   width: "50%",
-  // Add other styles here to match the TextField
-  // For example: fontFamily, fontSize, padding, etc.
 });
 interface FormValues {
   userId: string;
@@ -108,6 +108,8 @@ const IngredientsCreateForm: React.FC = () => {
   const classes = useStyles();
   const [isDragging, setIsDragging] = useState(false);
 
+  const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
+
   const {
     handleSubmit,
     control,
@@ -116,16 +118,33 @@ const IngredientsCreateForm: React.FC = () => {
     setValue,
   } = useForm<FormValues>();
 
-  const onSubmit = (data: FormValues) => {
-    console.log("Form values:", data);
-    reset({
-      ...data,
-      name: "",
-      quantity: 0,
-      date: new Date().toISOString().slice(0, 10),
-      unit: "",
-      picture: null,
-    });
+  const onSubmit = async (data: FormValues) => {
+    try {
+      console.log("Form values:", data);
+
+      // Send a POST request to your API endpoint
+      await axios.post(
+        "https://5c4e-150-129-102-218.ngrok-free.app/api/ingredients",
+        data
+      );
+
+      // Show a success snackbar
+      setIsSnackbarOpen(true);
+      // Reset the form after successful submission
+      reset({
+        ...data,
+        name: "",
+        quantity: 0,
+        date: new Date().toISOString().slice(0, 10),
+        unit: "",
+        picture: null,
+      });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      // Handle error and show an error snackbar
+      // You can add a state to show an error snackbar
+      // setIsErrorSnackbarOpen(true);
+    }
   };
   const handleDragEnter = useCallback(() => {
     setIsDragging(true);
@@ -151,15 +170,22 @@ const IngredientsCreateForm: React.FC = () => {
   };
   const handleDrop = useCallback(
     (acceptedFiles: File[]) => {
-      setIsDragging(false);
       if (acceptedFiles && acceptedFiles.length > 0) {
         const selectedFile = acceptedFiles[0];
         console.log("Selected picture:", selectedFile);
         setValue("picture", selectedFile);
+
+
+        // Show the Snackbar with the "Picture uploaded" message
+        setIsSnackbarOpen(true);
       }
     },
     [setValue]
   );
+  const handleCloseSnackbar = () => {
+    setIsSnackbarOpen(false);
+  };
+
   // Hook from react-dropzone to handle file drop and selection
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: handleDrop,
@@ -286,6 +312,24 @@ const IngredientsCreateForm: React.FC = () => {
             </section>
           )}
         />
+        {/* {isPictureUploaded && <p>Picture uploaded</p>} */}
+        <Snackbar
+        
+          open={isSnackbarOpen}
+          autoHideDuration={3000}
+          onClose={handleCloseSnackbar}
+        >
+          <MuiAlert
+          className={classes.alert}
+            onClose={handleCloseSnackbar}
+            severity="success"
+            elevation={6}
+            variant="filled"
+          >
+            Picture uploaded
+          </MuiAlert>
+        </Snackbar>
+
         <Box className={classes.boxItem}>
           <Button
             className={classes.button2}

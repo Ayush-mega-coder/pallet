@@ -1,9 +1,3 @@
-// const IngredientsEditForm:React.FC=()=>{
-//     return(
-//         <h1>Edit form</h1>
-//     )
-// }
-// export default IngredientsEditForm;
 
 import React, { useEffect, useCallback } from "react";
 import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
@@ -39,7 +33,6 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    // backgroundColor:'red',
     justifyContent: "center",
     gap: "20px",
     "& .MuiTextField-root, & .MuiFormControl-root": {
@@ -95,7 +88,7 @@ const useStyles = makeStyles((theme) => ({
     zIndex: 100,
   },
   inputLabel: {
-    // You can add any custom styles for InputLabel here
+    
   },
 }));
 

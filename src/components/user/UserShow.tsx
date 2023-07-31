@@ -60,13 +60,13 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "10px",
   },
   addBox: {
-    margin:'100px -100px 0 0px',
+    margin:'100px -180px 0 0px',
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
   },
   button: {
-    margin: "10px",
+    marginLeft: "100px",
     backgroundColor: "white",
     color: "black",
     "&:hover": {

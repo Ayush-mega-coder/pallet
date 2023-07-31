@@ -23,6 +23,7 @@ import { styled } from "@mui/material/styles";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 const theme = createTheme({
   palette: {
@@ -37,13 +38,11 @@ const theme = createTheme({
 
 const LoginContainer = styled(DialogContent)({
   width: "400px",
-  
   margin: "auto",
   marginTop: "10px",
   padding: "20px",
   borderRadius: "8px",
   boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
-
 });
 const LoginText = styled(DialogTitle)({
   margin: "1px",
@@ -55,11 +54,6 @@ const LoginText = styled(DialogTitle)({
 const StyledButton = styled(Button)({
   backgroundColor: "#002D62",
   color: "white",
-
-  // "&:hover": {
-  //   backgroundColor: "white",
-  //   color: "black",
-  // },
 });
 
 const BlueCircularProgress = styled(CircularProgress)({
@@ -90,7 +84,12 @@ const Login: React.FC<LoginProps> = ({ showPopup, onLoginSuccess }) => {
   useEffect(() => {
     // Check if the user is already logged in
     const storedStatus = localStorage.getItem(LOGIN_STATUS_KEY);
-    if (storedStatus === "true") {
+    const jwtToken = document.cookie.replace(
+      /(?:(?:^|.*;\s*)authToken\s*=\s*([^;]*).*$)|^.*$/,
+      '$1'
+    );
+
+    if (storedStatus === 'true' && jwtToken) {
       setIsLoggedIn(true);
       onLoginSuccess(); // Automatically trigger login success if already logged in
     }
@@ -99,26 +98,41 @@ const Login: React.FC<LoginProps> = ({ showPopup, onLoginSuccess }) => {
   const handleFormSubmit = async (data: any) => {
     setLoading(true);
 
-    if (data.username === "admin" && data.password === "admin") {
-      setTimeout(() => {
+    try {
+      // Make the API request to get the JWT token
+      const response = await axios.post(
+        'https://5c4e-150-129-102-218.ngrok-free.app/api/users/login',
+        {
+          email: data.username,
+          password: data.password,
+        }
+      );
+
+      // Check the response and handle login success/failure
+      if (response.status === 200) {
         setLoading(false);
-        setIsLoggedIn(true); // Set isLoggedIn to true when login is successful
-        localStorage.setItem(LOGIN_STATUS_KEY, "true"); // Store login status in localStorage
+        setIsLoggedIn(true);  
+
+        // Save the token as an HTTP-only cookie
+        const token = response.data.token; // Assuming the token is available in the API response
+        console.log(token)
+        document.cookie = `authToken=${token}; path=/; secure; HttpOnly; SameSite=Strict`;
+
         onLoginSuccess();
-      }, 1000);
-    } else {
-      setTimeout(() => {
+      } else {
         setLoading(false);
-        setShowSnackbar(true); // Show the Snackbar when credentials are  wrong
-      }, 1000);
+        setShowSnackbar(true);
+      }
+    } catch (error) {
+      console.error('Error while logging in:', error);
+      setLoading(false);
+      setShowSnackbar(true);
     }
   };
 
   const handleSnackbarClose = () => {
     setShowSnackbar(false); // Hide the Snackbar when it is closed by the user
   };
-
- 
 
   // If already logged in, don't show the login dialog
   if (isLoggedIn) {
@@ -138,7 +152,6 @@ const Login: React.FC<LoginProps> = ({ showPopup, onLoginSuccess }) => {
           </Typography>
 
           <Avatar alt="User Profile" src="/path/to/profile-image.jpg" sx={{ marginLeft: 2 }} />
-
         </Toolbar>
       </AppBar>
 
