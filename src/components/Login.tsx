@@ -18,7 +18,6 @@ import {
   MenuItem,
 } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { red } from "@mui/material/colors";
 import { styled } from "@mui/material/styles";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useForm } from "react-hook-form";
@@ -101,7 +100,7 @@ const Login: React.FC<LoginProps> = ({ showPopup, onLoginSuccess }) => {
     try {
       // Make the API request to get the JWT token
       const response = await axios.post(
-        'https://5c4e-150-129-102-218.ngrok-free.app/api/users/login',
+        'http://localhost:5000/api/users/login',
         {
           email: data.username,
           password: data.password,

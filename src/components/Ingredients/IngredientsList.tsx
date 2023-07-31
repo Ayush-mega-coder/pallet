@@ -59,7 +59,7 @@ const IngredientsList: React.FC = () => {
         );
 
         const response = await axios.get(
-          "https://5c4e-150-129-102-218.ngrok-free.app/api/ingredients",
+          "http://localhost:5000/api/ingredients",
           {
             headers: {
               Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY0YmZkZDg0Y2E0YzM1NTFjOTU2ZTEzZSIsIm5hbWUiOiJzaGEiLCJlbWFpbCI6InNoYW1pbGtvdHRhOTlAZ21haWwuY29tIiwiYWN0aXZlIjp0cnVlLCJwYXNzd29yZCI6IiQyYiQxMiRXTmtLdll3eGxKdkNHRC5lSi5WNFBlY0FqeWR4SVphZmV1VWtNLjlURmNud3RCcXZrckRSNiIsInJvbGUiOiJVU0VSIiwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yNVQxNDozNDo0NC4yMjFaIiwidXBkYXRlZEF0IjoiMjAyMy0wNy0yNVQxNDozNDo0NC4yMjFaIiwiX192IjowfSwiaWF0IjoxNjkwMjk2MzU3fQ.xZn1KSQ6prK6v39xs5iVFgDUAKC1ipHmCmZ6b7K-b6o`,
@@ -109,10 +109,10 @@ const IngredientsList: React.FC = () => {
       sortable: false,
       renderCell: (params) => (
         <Box display="flex" alignItems="center" gap={2}>
-          <IconButton>
+          <IconButton onClick={() => handleEditClick()} >
             <Edit />
           </IconButton>
-          <IconButton onClick={() => handleDeleteClick}>
+          <IconButton onClick={() => handleDeleteOneClick(params.id as string)}>
             <Delete />
           </IconButton>
         </Box>
@@ -134,6 +134,29 @@ const IngredientsList: React.FC = () => {
   };
   const handleCreateClick = () => {
     navigate("/ingredients/create");
+  };
+  const handleDeleteOneClick = (ingredientId: string) => {
+    // Implement the delete logic here for a single ingredient with the provided 'ingredientId'
+    // For example, you can make an API call to delete the ingredient from the backend.
+    // The following is a hypothetical example:
+    axios.delete(`http://localhost:5000/api/ingredients/${ingredientId}`,{
+      headers: {
+        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY0YzFlYjMyNTg0Mjk4YjUxNjI1YWNkZiIsIm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AcGFsbGF0ZS5jb20iLCJhY3RpdmUiOnRydWUsInBhc3N3b3JkIjoiJDJiJDEyJE9sbHBmSmR3akNHV2F3cnNJeHgwSnVqVUxOZ2NsTXpSejUwVjZwN2V3elFJMERiRTR2LjdtIiwicm9sZSI6IkFETUlOIiwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yMFQxMjoyMjozOC42NThaIiwidXBkYXRlZEF0IjoiMjAyMy0wNy0yMVQwOToyNToyNS4yOTdaIiwiX192IjowfSwiaWF0IjoxNjkwODA2OTk0fQ.7vspbw1A1N019ewYYojPHS8AyMlHzlxk134f_c5GlUI`,
+        "ngrok-skip-browser-warning": true,
+      },
+    }
+    
+    ).then((response) => {
+      // Handle the successful deletion in the UI
+      setIngredients((prevIngredients) =>
+        prevIngredients.filter((ingredient) => ingredient._id !== ingredientId)
+      );
+    }).catch((error) => {
+      console.error("Error while deleting ingredient:", error);
+    });
+  };
+  const handleEditClick = () => {
+    navigate("/ingredients/edit");
   };
   const handleRowSelectionModelChange = (selection: any) => {
     setBulkDeleteVisible(true);
@@ -164,7 +187,6 @@ const IngredientsList: React.FC = () => {
           height: "80%",
           width: "80%",
           boxShadow: "0px 2px 4px rgba(4, 4, 1, 0.4)",
-
           // padding: "5px",
           borderRadius: "8px",
         }}

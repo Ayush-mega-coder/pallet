@@ -99,9 +99,9 @@ interface FormValues {
   userId: string;
   name: string;
   quantity: number;
-  date: string;
-  unit: string;
-  picture: File | null;
+  expiry: string;
+  type: string;
+  image: File | null;
 }
 
 const IngredientsCreateForm: React.FC = () => {
@@ -123,9 +123,17 @@ const IngredientsCreateForm: React.FC = () => {
       console.log("Form values:", data);
 
       // Send a POST request to your API endpoint
+      const config = {
+        headers: {
+          Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY0YmZkZDg0Y2E0YzM1NTFjOTU2ZTEzZSIsIm5hbWUiOiJzaGEiLCJlbWFpbCI6InNoYW1pbGtvdHRhOTlAZ21haWwuY29tIiwiYWN0aXZlIjp0cnVlLCJwYXNzd29yZCI6IiQyYiQxMiRXTmtLdll3eGxKdkNHRC5lSi5WNFBlY0FqeWR4SVphZmV1VWtNLjlURmNud3RCcXZrckRSNiIsInJvbGUiOiJVU0VSIiwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yNVQxNDozNDo0NC4yMjFaIiwidXBkYXRlZEF0IjoiMjAyMy0wNy0yNVQxNDozNDo0NC4yMjFaIiwiX192IjowfSwiaWF0IjoxNjkwMjk2MzU3fQ.xZn1KSQ6prK6v39xs5iVFgDUAKC1ipHmCmZ6b7K-b6o", // Your access token here
+        },
+      };
+  
+      // Send a POST request to your API endpoint with data and configuration
       await axios.post(
-        "https://5c4e-150-129-102-218.ngrok-free.app/api/ingredients",
-        data
+        "http://localhost:5000/api/ingredients",
+        data,
+        config // Pass the configuration as the third argument
       );
 
       // Show a success snackbar
@@ -135,15 +143,16 @@ const IngredientsCreateForm: React.FC = () => {
         ...data,
         name: "",
         quantity: 0,
-        date: new Date().toISOString().slice(0, 10),
-        unit: "",
-        picture: null,
+        expiry: new Date().toISOString().slice(0, 10),
+        type: "",
+        image: null,
       });
     } catch (error) {
       console.error("Error submitting form:", error);
       // Handle error and show an error snackbar
       // You can add a state to show an error snackbar
       // setIsErrorSnackbarOpen(true);
+      
     }
   };
   const handleDragEnter = useCallback(() => {
@@ -173,7 +182,7 @@ const IngredientsCreateForm: React.FC = () => {
       if (acceptedFiles && acceptedFiles.length > 0) {
         const selectedFile = acceptedFiles[0];
         console.log("Selected picture:", selectedFile);
-        setValue("picture", selectedFile);
+        setValue("image", selectedFile);
 
 
         // Show the Snackbar with the "Picture uploaded" message
@@ -245,12 +254,12 @@ const IngredientsCreateForm: React.FC = () => {
         />
 
         <Controller
-          name="unit"
+          name="type"
           control={control}
           defaultValue=""
           rules={{ required: "Unit is required" }}
           render={({ field }) => (
-            <FormControl error={!!errors.unit} className={classes.formControl}>
+            <FormControl error={!!errors.type} className={classes.formControl}>
               <InputLabel className={classes.inputLabel}>Unit</InputLabel>
               <Select {...field}>
                 <MenuItem value="KG">kg</MenuItem>
@@ -259,13 +268,13 @@ const IngredientsCreateForm: React.FC = () => {
                 <MenuItem value="ML">ml</MenuItem>
                 <MenuItem value="COUNT">Count</MenuItem>
               </Select>
-              <FormHelperText>{errors.unit?.message}</FormHelperText>
+              <FormHelperText>{errors.type?.message}</FormHelperText>
             </FormControl>
           )}
         />
 
         <Controller
-          name="date"
+          name="expiry"
           control={control}
           defaultValue={new Date().toISOString().slice(0, 10)}
           rules={{ required: "Date is required" }}
@@ -274,14 +283,14 @@ const IngredientsCreateForm: React.FC = () => {
               label="Date"
               type="date"
               {...field}
-              error={!!errors.date}
-              helperText={errors.date?.message}
+              error={!!errors.expiry}
+              helperText={errors.expiry?.message}
             />
           )}
         />
 
         <Controller
-          name="picture"
+          name="image"
           control={control}
           defaultValue={null}
           rules={{ required: "Picture is required" }}
