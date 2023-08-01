@@ -15,7 +15,7 @@ function App() {
     name: "Onion",
     quantity: 100,
     date: "2023-07-25",
-    unit: "kg",
+    type: "",
     picture: null,
   };
 
@@ -34,7 +34,7 @@ function App() {
               <Route path=":id/show" element={<IngredientsShow />} />
               <Route path="show" element={<IngredientsShow />} />
               <Route
-                path="editForm"
+                path=":ingredientId/editForm"
                 element={
                   <IngredientsEditForm
                     ingredient={ingredientData}

@@ -1,6 +1,11 @@
 
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useState,useCallback } from "react";
+import { useParams } from "react-router-dom";
 import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
+import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+
 import {
   Button,
   Box,
@@ -13,6 +18,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useForm, Controller } from "react-hook-form";
+import axios from 'axios'
 
 import AsyncSelect from "react-select/async";
 
@@ -98,7 +104,7 @@ interface Ingredient {
   name: string;
   quantity: number;
   date: string;
-  unit: string;
+  type: string;
   picture: File | null;
 }
 
@@ -107,7 +113,7 @@ interface FormValues {
   name: string;
   quantity: number;
   date: string;
-  unit: string;
+  type: string;
   picture: File | null;
 }
 
@@ -123,9 +129,16 @@ const StyledAsyncSelect = styled(AsyncSelect)({
 });
 
 const IngredientsEditForm: React.FC<IngredientsEditFormProps> = ({
-  ingredient,
+  
   onSave,
 }) => {
+ 
+const { ingredientId } = useParams<{ ingredientId: string }>();
+
+  // Create a state to hold the fetched ingredient data
+  const [ingredientData, setIngredientData] = useState<Ingredient | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const navigate = useNavigate();
   const classes = useStyles();
 
   const {
@@ -137,19 +150,66 @@ const IngredientsEditForm: React.FC<IngredientsEditFormProps> = ({
   } = useForm<FormValues>();
 
   useEffect(() => {
-    // Pre-populate the form fields with the existing ingredient values
-    reset({
-      userId: ingredient.userId,
-      name: ingredient.name,
-      quantity: ingredient.quantity,
-      date: ingredient.date,
-      unit: ingredient.unit,
-      picture: ingredient.picture,
-    });
-  }, [ingredient]);
+    const fetchIngredientData = async () => {
+      try {
+        // Fetch the ingredient data based on the ingredientId
+        const response = await axios.get(
+          `http://localhost:5000/api/ingredients/${ingredientId}`,
+          {
+            headers: {
+              Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY0YzFlYjMyNTg0Mjk4YjUxNjI1YWNkZiIsIm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AcGFsbGF0ZS5jb20iLCJhY3RpdmUiOnRydWUsInBhc3N3b3JkIjoiJDJiJDEyJE9sbHBmSmR3akNHV2F3cnNJeHgwSnVqVUxOZ2NsTXpSejUwVjZwN2V3elFJMERiRTR2LjdtIiwicm9sZSI6IkFETUlOIiwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yMFQxMjoyMjozOC42NThaIiwidXBkYXRlZEF0IjoiMjAyMy0wNy0yMVQwOToyNToyNS4yOTdaIiwiX192IjowfSwiaWF0IjoxNjkwODA2OTk0fQ.7vspbw1A1N019ewYYojPHS8AyMlHzlxk134f_c5GlUI",
+              "ngrok-skip-browser-warning": true,
+            },
+          }
+        );
 
-  const onSubmit = (data: FormValues) => {
-    onSave(data);
+        const data = response.data.data.ingredient; 
+        console.log(data)
+        setIngredientData(data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching ingredient data:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchIngredientData();
+  }, [ingredientId]);
+  useEffect(() => {
+
+    if (ingredientData) {
+      reset({
+        // userId: ingredientData.userId,
+        name: ingredientData.name,
+        quantity: ingredientData.quantity,
+        date: ingredientData.date,
+        type: ingredientData.type,
+        // picture: ingredientData.picture,
+      });
+    }
+  }, [ingredientData]);
+
+  const onSubmit = async (data: FormValues) => {
+    try {
+
+      const response = await axios.put(
+        `https://8292-150-129-102-218.ngrok-free.app/api/ingredients/${ingredientId}`,
+        data,
+        {
+          headers: {
+            Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY0YzFlYjMyNTg0Mjk4YjUxNjI1YWNkZiIsIm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AcGFsbGF0ZS5jb20iLCJhY3RpdmUiOnRydWUsInBhc3N3b3JkIjoiJDJiJDEyJE9sbHBmSmR3akNHV2F3cnNJeHgwSnVqVUxOZ2NsTXpSejUwVjZwN2V3elFJMERiRTR2LjdtIiwicm9sZSI6IkFETUlOIiwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yMFQxMjoyMjozOC42NThaIiwidXBkYXRlZEF0IjoiMjAyMy0wNy0yMVQwOToyNToyNS4yOTdaIiwiX192IjowfSwiaWF0IjoxNjkwODA2OTk0fQ.7vspbw1A1N019ewYYojPHS8AyMlHzlxk134f_c5GlUI",
+          },
+        }
+      );
+
+      console.log("Updated ingredient:", response.data);
+
+      // Call the onSave function to inform the parent component that the data is saved
+      onSave(data);
+      navigate('/ingredients');
+    } catch (error) {
+      console.error("Error updating ingredient:", error);
+    }
   };
 
   const handleAddMoreButtonClick = () => {
@@ -170,40 +230,34 @@ const IngredientsEditForm: React.FC<IngredientsEditFormProps> = ({
       callback(filterColors(inputValue));
     }, 1000);
   };
-  const handleDrop = useCallback(
-    (acceptedFiles: File[]) => {
-      if (acceptedFiles && acceptedFiles.length > 0) {
-        const selectedFile = acceptedFiles[0];
-        console.log("Selected picture:", selectedFile);
-        setValue("picture", selectedFile);
-      }
-    },
-    [setValue]
-  );
-  // Hook from react-dropzone to handle file drop and selection
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop: handleDrop,
-  });
+  // const handleDrop = useCallback(
+  //   (acceptedFiles: File[]) => {
+  //     if (acceptedFiles && acceptedFiles.length > 0) {
+  //       const selectedFile = acceptedFiles[0];
+  //       console.log("Selected picture:", selectedFile);
+  //       setValue("picture", selectedFile);
+  //     }
+  //   },
+  //   [setValue]
+  // );
+  // // Hook from react-dropzone to handle file drop and selection
+  // const { getRootProps, getInputProps } = useDropzone({
+  //   onDrop: handleDrop,
+  // });
 
   return (
     <div>
       <div className={classes.container}>
-      <Controller
-          name="userId"
-          control={control}
-          defaultValue=""
-          rules={{ required: "User ID is required" }}
-          render={({ field }) => (
+      
             <StyledAsyncSelect
               cacheOptions
               defaultOptions
               loadOptions={loadOptions}
-              {...field}
+          
               placeholder="UserID"
               className={classes.users}
             />
-          )}
-        />
+         
 
         <Controller
           name="name"
@@ -237,20 +291,22 @@ const IngredientsEditForm: React.FC<IngredientsEditFormProps> = ({
         />
 
         <Controller
-          name="unit"
+          name="type"
           control={control}
           defaultValue=""
           rules={{ required: "Unit is required" }}
           render={({ field }) => (
-            <FormControl error={!!errors.unit}>
+            <FormControl error={!!errors.type}>
               <InputLabel>Unit</InputLabel>
               <Select {...field}>
-                <MenuItem value="kg">kg</MenuItem>
-                <MenuItem value="gm">g</MenuItem>
-                <MenuItem value="L">L</MenuItem>
-                <MenuItem value="ml">ml</MenuItem>
+                <MenuItem value="kg">KG</MenuItem>
+                <MenuItem value="gm">G</MenuItem>
+                <MenuItem value="L">LT</MenuItem>
+                <MenuItem value="ml">ML</MenuItem>
+                <MenuItem value="count">COUNT</MenuItem>
+
               </Select>
-              <FormHelperText>{errors.unit?.message}</FormHelperText>
+              <FormHelperText>{errors.type?.message}</FormHelperText>
             </FormControl>
           )}
         />
@@ -271,7 +327,7 @@ const IngredientsEditForm: React.FC<IngredientsEditFormProps> = ({
           )}
         />
 
-        <Controller
+        {/* <Controller
           name="picture"
           control={control}
           defaultValue={null}
@@ -290,7 +346,7 @@ const IngredientsEditForm: React.FC<IngredientsEditFormProps> = ({
               </div>
             </section>
           )}
-        />
+        /> */}
       
 
       <Box mt={2} className={classes.boxItem}>
@@ -299,6 +355,7 @@ const IngredientsEditForm: React.FC<IngredientsEditFormProps> = ({
           onClick={handleSubmit(onSubmit)}
           startIcon={<SaveIcon />}
           className={classes.button2}
+          variant="contained"
         >
           Save
         </Button>

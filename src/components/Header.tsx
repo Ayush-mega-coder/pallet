@@ -19,6 +19,9 @@ import { styled } from "@mui/material/styles";
 import Sidebar from "./Sidebar";
 import Login from "./Login"; // Import your Login component here
 
+import { useNavigate } from "react-router-dom";
+
+
 const StyledAppBar = styled(AppBar)({
   background: "#002D62",
   zIndex: 1300,
@@ -37,6 +40,21 @@ const HeaderContainer = styled(Box)({
   justifyContent: "center",
   fontSize: "40px",
 });
+const StyledButton = styled(Button)({
+  backgroundColor:'#002D62',
+  color:'white',
+  margin:'10px',
+ 
+});
+const MenuItemButton = styled(MenuItem)({
+  backgroundColor:'#002D62',
+  color:'white',
+  
+  "&.Mui-selected": {
+    backgroundColor:'#002D62',
+  color:'white',
+  },
+})
 
 const Header: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -44,6 +62,8 @@ const Header: React.FC = () => {
   const [showLoginPopup, setShowLoginPopup] = useState(false); // Track login popup visibility
   const [showLogoutConfirmation, setShowLogoutConfirmation] = useState(false); // Track logout confirmation dialog visibility
   const LOGIN_STATUS_KEY = "isLoggedIn";
+  const navigate = useNavigate();
+
 
   const handleSidebarOpen = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -72,6 +92,7 @@ const Header: React.FC = () => {
       localStorage.setItem(LOGIN_STATUS_KEY, "false");
       setShowLoginPopup(true);
     }
+    navigate("/")
   };
 
   return (
@@ -103,7 +124,10 @@ const Header: React.FC = () => {
       <Sidebar onClose={handleSidebarClose} />
 
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+        {/* <MenuItemButton onClick={handleLogout} >Logout</MenuItemButton> */}
+        <MenuItem onClick={handleLogout} > Logout
+        {/* <StyledButton onClick={handleLogout} variant="contained" >Logout</StyledButton> */}
+        </MenuItem>
       </Menu>
 
       {showLoginPopup && (
@@ -116,12 +140,12 @@ const Header: React.FC = () => {
           {/* You can add more details or a message here */}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => handleLogoutConfirmation(false)} color="primary">
+          <StyledButton onClick={() => handleLogoutConfirmation(false)} variant="contained">
             Cancel
-          </Button>
-          <Button onClick={() => handleLogoutConfirmation(true)} color="primary">
+          </StyledButton>
+          <StyledButton onClick={() => handleLogoutConfirmation(true)} variant="contained">
             Logout
-          </Button>
+          </StyledButton>
         </DialogActions>
       </Dialog>
     </>

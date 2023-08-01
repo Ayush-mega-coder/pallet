@@ -23,7 +23,7 @@ const Container = styled(Box)({
   maxWidth: "400px",
   // margin: "0 auto",
   // marginTop: "1px",
-  marginLeft: "400px",
+  marginLeft: "40%",
   backgroundColor: "#fff",
 });
 const AddBox = styled(Box)({
@@ -33,7 +33,7 @@ const AddBox = styled(Box)({
   alignItems: "center",
 
   marginTop: "80px",
-  marginLeft: "440px",
+  marginLeft: "43%",
 });
 
 const Title = styled(Typography)({
@@ -136,7 +136,7 @@ const IngredientShowPage: React.FC = () => {
         <Quantity>
           Quantity: {ingredient.quantity} {ingredient.unit}
         </Quantity>
-        <Date>Expiry: {ingredient.expiry}</Date>
+        <Date>Expiry: {ingredient.expiry.split("T")[0]}</Date>
 
         <Image src={ingredient.picture} alt={ingredient.name} />
 

@@ -64,12 +64,17 @@ interface LoginProps {
   onLoginSuccess: () => void;
 }
 
+type FormData = {
+  username: string;
+  password: string;
+}
+
 const Login: React.FC<LoginProps> = ({ showPopup, onLoginSuccess }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm<FormData>();
 
   const [loading, setLoading] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -94,7 +99,7 @@ const Login: React.FC<LoginProps> = ({ showPopup, onLoginSuccess }) => {
     }
   }, [onLoginSuccess]);
 
-  const handleFormSubmit = async (data: any) => {
+  const handleFormSubmit = async (data: FormData) => {
     setLoading(true);
 
     try {
@@ -107,13 +112,13 @@ const Login: React.FC<LoginProps> = ({ showPopup, onLoginSuccess }) => {
         }
       );
 
-      // Check the response and handle login success/failure
+
       if (response.status === 200) {
         setLoading(false);
         setIsLoggedIn(true);  
 
-        // Save the token as an HTTP-only cookie
-        const token = response.data.token; // Assuming the token is available in the API response
+
+        const token = response.data.token; 
         console.log(token)
         document.cookie = `authToken=${token}; path=/; secure; HttpOnly; SameSite=Strict`;
 
@@ -130,10 +135,10 @@ const Login: React.FC<LoginProps> = ({ showPopup, onLoginSuccess }) => {
   };
 
   const handleSnackbarClose = () => {
-    setShowSnackbar(false); // Hide the Snackbar when it is closed by the user
+    setShowSnackbar(false); 
   };
 
-  // If already logged in, don't show the login dialog
+
   if (isLoggedIn) {
     return null;
   }

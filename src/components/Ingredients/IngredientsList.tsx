@@ -17,6 +17,7 @@ import {
   InputLabel,
   FormHelperText,
   IconButton,
+  CircularProgress, // Import CircularProgress for the loader
 } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
 const AddBox = styled(Box)({
@@ -40,12 +41,12 @@ const StyledButtonCreate = styled(Button)({
   color: "black",
 
   "&:hover": {
-    // backgroundColor: "white",
     color: "black",
   },
 });
 const IngredientsList: React.FC = () => {
   const [ingredients, setIngredients] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true); // Add a loading state
 
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const navigate = useNavigate();
@@ -70,20 +71,18 @@ const IngredientsList: React.FC = () => {
 
         const data = response.data.data.ingredients;
         setIngredients(data);
+        setLoading(false); // Set loading to false once the data is fetched
         // console.log(data);
         // console.log(ingredients)
       } catch (error) {
         console.error("Error fetching ingredients:", error);
+        setLoading(false); // Set loading to false in case of error as well
       }
     };
 
     fetchIngredients();
   }, []);
-  useEffect(() => {
-    // Log ingredients whenever it changes
-    console.log("data is", ingredients);
-    // console.log(ingredients[0])
-  }, [ingredients]);
+
 
   const columns: GridColDef[] = [
     { field: "_id", headerName: "ID", width: 80 },
@@ -99,7 +98,19 @@ const IngredientsList: React.FC = () => {
       },
     },
     { field: "quantity", headerName: "Quantity", width: 100, sortable: true },
-    { field: "expiry", headerName: "Date", width: 140, sortable: true },
+    {
+      field: "expiry",
+      headerName: "Date",
+      width: 140,
+      sortable: true,
+
+      valueFormatter: (params) => {
+
+        const originalDateStr = params.value as string;
+        const formattedDate = originalDateStr.split("T")[0];
+        return formattedDate;
+      },
+    },
     { field: "type", headerName: "Unit", width: 100, sortable: true },
     { field: "image", headerName: "Picture", width: 150 },
     {
@@ -109,10 +120,11 @@ const IngredientsList: React.FC = () => {
       sortable: false,
       renderCell: (params) => (
         <Box display="flex" alignItems="center" gap={2}>
-          <IconButton onClick={() => handleEditClick()} >
+          <IconButton onClick={(event) => handleEditClick(params.id as string, event)}>
             <Edit />
           </IconButton>
-          <IconButton onClick={() => handleDeleteOneClick(params.id as string)}>
+          <IconButton onClick={(event) => handleDeleteOneClick([params.id as string], event)}>
+      <Delete />
             <Delete />
           </IconButton>
         </Box>
@@ -120,46 +132,48 @@ const IngredientsList: React.FC = () => {
     },
   ];
 
-  const handleDeleteClick = () => {
-    // Remove the selected rows from the state
-    setIngredients((prevIngredients) =>
-      prevIngredients.filter(
-        (ingredient) => !selectedRows.includes(ingredient.id)
-      )
-    );
-
-    // Clear the selection
+  const handleDeleteClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    handleDeleteOneClick(selectedRows, event);
     setSelectedRows([]);
     setBulkDeleteVisible(false);
   };
   const handleCreateClick = () => {
     navigate("/ingredients/create");
   };
-  const handleDeleteOneClick = (ingredientId: string) => {
-    // Implement the delete logic here for a single ingredient with the provided 'ingredientId'
-    // For example, you can make an API call to delete the ingredient from the backend.
-    // The following is a hypothetical example:
-    axios.delete(`http://localhost:5000/api/ingredients/${ingredientId}`,{
-      headers: {
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY0YzFlYjMyNTg0Mjk4YjUxNjI1YWNkZiIsIm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AcGFsbGF0ZS5jb20iLCJhY3RpdmUiOnRydWUsInBhc3N3b3JkIjoiJDJiJDEyJE9sbHBmSmR3akNHV2F3cnNJeHgwSnVqVUxOZ2NsTXpSejUwVjZwN2V3elFJMERiRTR2LjdtIiwicm9sZSI6IkFETUlOIiwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yMFQxMjoyMjozOC42NThaIiwidXBkYXRlZEF0IjoiMjAyMy0wNy0yMVQwOToyNToyNS4yOTdaIiwiX192IjowfSwiaWF0IjoxNjkwODA2OTk0fQ.7vspbw1A1N019ewYYojPHS8AyMlHzlxk134f_c5GlUI`,
-        "ngrok-skip-browser-warning": true,
-      },
-    }
-    
-    ).then((response) => {
-      // Handle the successful deletion in the UI
-      setIngredients((prevIngredients) =>
-        prevIngredients.filter((ingredient) => ingredient._id !== ingredientId)
-      );
-    }).catch((error) => {
-      console.error("Error while deleting ingredient:", error);
-    });
+  const handleDeleteOneClick = (ingredientIds: string[], clickEvent: React.MouseEvent) => {
+    clickEvent.stopPropagation();
+    axios
+      .delete(`https://8292-150-129-102-218.ngrok-free.app/api/ingredients`, {
+        headers: {
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY0YzFlYjMyNTg0Mjk4YjUxNjI1YWNkZiIsIm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AcGFsbGF0ZS5jb20iLCJhY3RpdmUiOnRydWUsInBhc3N3b3JkIjoiJDJiJDEyJE9sbHBmSmR3akNHV2F3cnNJeHgwSnVqVUxOZ2NsTXpSejUwVjZwN2V3elFJMERiRTR2LjdtIiwicm9sZSI6IkFETUlOIiwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yMFQxMjoyMjozOC42NThaIiwidXBkYXRlZEF0IjoiMjAyMy0wNy0yMVQwOToyNToyNS4yOTdaIiwiX192IjowfSwiaWF0IjoxNjkwODA2OTk0fQ.7vspbw1A1N019ewYYojPHS8AyMlHzlxk134f_c5GlUI`,
+          "ngrok-skip-browser-warning": true,
+        },
+        data:{
+          ingredientId: ingredientIds,
+        }
+      })
+      .then((response) => {
+
+        setIngredients((prevIngredients) =>
+          prevIngredients.filter(
+            (ingredient) => !ingredientIds.includes(ingredient._id)
+          )
+        );
+      })
+      .catch((error) => {
+        console.error("Error while deleting ingredients:", error);
+      });
   };
-  const handleEditClick = () => {
-    navigate("/ingredients/edit");
+  const handleEditClick = (ingredientId:string,clickEvent: React.MouseEvent) => {
+    clickEvent.stopPropagation();
+
+    navigate(`/ingredients/${ingredientId}/editForm`);
   };
-  const handleRowSelectionModelChange = (selection: any) => {
-    setBulkDeleteVisible(true);
+  const handleRowSelectionModelChange = (selectionModel: any) => {
+
+    setSelectedRows(selectionModel);
+    setBulkDeleteVisible(selectionModel.length > 0);
   };
   const handleRowClick = (params: any) => {
     const ingredientId = params.id;
@@ -187,19 +201,31 @@ const IngredientsList: React.FC = () => {
           height: "80%",
           width: "80%",
           boxShadow: "0px 2px 4px rgba(4, 4, 1, 0.4)",
-          // padding: "5px",
           borderRadius: "8px",
         }}
       >
-        <DataGrid
-          columns={columns}
-          rows={ingredients}
-          checkboxSelection
-          pagination
-          onRowClick={handleRowClick}
-          onRowSelectionModelChange={handleRowSelectionModelChange}
-          getRowId={(row) => row._id}
-        />
+        {loading ? (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "80%",
+            }}
+          >
+            <CircularProgress />
+          </div>
+        ) : (
+          <DataGrid
+            columns={columns}
+            rows={ingredients}
+            checkboxSelection
+            pagination
+            onRowClick={handleRowClick}
+            onRowSelectionModelChange={handleRowSelectionModelChange} // Changed the event handler name to onSelectionModelChange
+            getRowId={(row) => row._id}
+          />
+        )}
       </div>
     </>
   );

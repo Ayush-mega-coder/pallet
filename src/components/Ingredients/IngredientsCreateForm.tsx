@@ -1,6 +1,9 @@
 import React, { useCallback, useState } from "react";
 import { styled } from "@mui/material/styles";
 import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
+import { useNavigate } from "react-router-dom";
+
+
 import {
   Button,
   Box,
@@ -18,7 +21,7 @@ import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import SaveIcon from "@mui/icons-material/Save";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
-import axios from "axios"; 
+import axios from "axios";
 import { userOptions } from "./data";
 import { useDropzone } from "react-dropzone";
 import { makeStyles } from "@mui/styles";
@@ -72,7 +75,6 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: "#002D62",
       color: "white",
     },
-  
   },
   boxItem: {
     // marginTop: "-40px",
@@ -86,9 +88,9 @@ const useStyles = makeStyles((theme) => ({
   users: {
     zIndex: 100,
   },
-  alert:{
-    marginLeft:'530px',
-    backgroundColor:'#002D62',
+  alert: {
+    marginLeft: "600px",
+    backgroundColor: "#002D62",
   },
   inputLabel: {},
 }));
@@ -101,7 +103,8 @@ interface FormValues {
   quantity: number;
   expiry: string;
   type: string;
-  image: File | null;
+  image: File | string | null;
+  // base64Image: string | null;
 }
 
 const IngredientsCreateForm: React.FC = () => {
@@ -109,6 +112,7 @@ const IngredientsCreateForm: React.FC = () => {
   const [isDragging, setIsDragging] = useState(false);
 
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
+  const navigate = useNavigate();
 
   const {
     handleSubmit,
@@ -120,15 +124,23 @@ const IngredientsCreateForm: React.FC = () => {
 
   const onSubmit = async (data: FormValues) => {
     try {
+      // if (data.image instanceof File) {
+      //   const imageBase64 = await getBase64String(data.image);
+      //   data.image = imageBase64;
+      // }
+      console.log(data.image)
+      data.quantity = parseFloat(data.quantity.toString());
+      data.image = "https://exmple.com/image";
       console.log("Form values:", data);
 
-      // Send a POST request to your API endpoint
+
       const config = {
         headers: {
-          Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY0YmZkZDg0Y2E0YzM1NTFjOTU2ZTEzZSIsIm5hbWUiOiJzaGEiLCJlbWFpbCI6InNoYW1pbGtvdHRhOTlAZ21haWwuY29tIiwiYWN0aXZlIjp0cnVlLCJwYXNzd29yZCI6IiQyYiQxMiRXTmtLdll3eGxKdkNHRC5lSi5WNFBlY0FqeWR4SVphZmV1VWtNLjlURmNud3RCcXZrckRSNiIsInJvbGUiOiJVU0VSIiwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yNVQxNDozNDo0NC4yMjFaIiwidXBkYXRlZEF0IjoiMjAyMy0wNy0yNVQxNDozNDo0NC4yMjFaIiwiX192IjowfSwiaWF0IjoxNjkwMjk2MzU3fQ.xZn1KSQ6prK6v39xs5iVFgDUAKC1ipHmCmZ6b7K-b6o", // Your access token here
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY0YmZkZDg0Y2E0YzM1NTFjOTU2ZTEzZSIsIm5hbWUiOiJzaGEiLCJlbWFpbCI6InNoYW1pbGtvdHRhOTlAZ21haWwuY29tIiwiYWN0aXZlIjp0cnVlLCJwYXNzd29yZCI6IiQyYiQxMiRXTmtLdll3eGxKdkNHRC5lSi5WNFBlY0FqeWR4SVphZmV1VWtNLjlURmNud3RCcXZrckRSNiIsInJvbGUiOiJVU0VSIiwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yNVQxNDozNDo0NC4yMjFaIiwidXBkYXRlZEF0IjoiMjAyMy0wNy0yNVQxNDozNDo0NC4yMjFaIiwiX192IjowfSwiaWF0IjoxNjkwMjk2MzU3fQ.xZn1KSQ6prK6v39xs5iVFgDUAKC1ipHmCmZ6b7K-b6o", // Your access token here
         },
       };
-  
+
       // Send a POST request to your API endpoint with data and configuration
       await axios.post(
         "http://localhost:5000/api/ingredients",
@@ -138,22 +150,34 @@ const IngredientsCreateForm: React.FC = () => {
 
       // Show a success snackbar
       setIsSnackbarOpen(true);
-      // Reset the form after successful submission
+      navigate('/ingredients')
+
+
       reset({
         ...data,
         name: "",
         quantity: 0,
         expiry: new Date().toISOString().slice(0, 10),
         type: "",
-        image: null,
+        // image: null,
       });
     } catch (error) {
       console.error("Error submitting form:", error);
-      // Handle error and show an error snackbar
-      // You can add a state to show an error snackbar
-      // setIsErrorSnackbarOpen(true);
       
     }
+  };
+  const getBase64String = (file: File) => {
+    return new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === "string") {
+          resolve(reader.result);
+        } else {
+          reject(new Error("Failed to read file."));
+        }
+      };
+      reader.readAsDataURL(file);
+    });
   };
   const handleDragEnter = useCallback(() => {
     setIsDragging(true);
@@ -184,7 +208,6 @@ const IngredientsCreateForm: React.FC = () => {
         console.log("Selected picture:", selectedFile);
         setValue("image", selectedFile);
 
-
         // Show the Snackbar with the "Picture uploaded" message
         setIsSnackbarOpen(true);
       }
@@ -195,7 +218,7 @@ const IngredientsCreateForm: React.FC = () => {
     setIsSnackbarOpen(false);
   };
 
-  // Hook from react-dropzone to handle file drop and selection
+
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: handleDrop,
     onDragEnter: handleDragEnter, // Add the drag enter event handler
@@ -205,21 +228,12 @@ const IngredientsCreateForm: React.FC = () => {
   return (
     <div>
       <div className={classes.container}>
-        <Controller
-          name="userId"
-          control={control}
-          defaultValue=""
-          rules={{ required: "User ID is required" }}
-          render={({ field }) => (
-            <StyledAsyncSelect
-              cacheOptions
-              defaultOptions
-              loadOptions={loadOptions}
-              {...field}
-              placeholder="UserID"
-              className={classes.users}
-            />
-          )}
+        <StyledAsyncSelect
+          cacheOptions
+          defaultOptions
+          loadOptions={loadOptions}
+          placeholder="UserID"
+          className={classes.users}
         />
 
         <Controller
@@ -241,7 +255,10 @@ const IngredientsCreateForm: React.FC = () => {
           name="quantity"
           control={control}
           defaultValue={0}
-          rules={{ required: "Quantity is required", min: 1 }}
+          rules={{
+            required: "Quantity is required",
+            min: { value: 0, message: "Quantity must be greater than or equal to 0" },
+          }}
           render={({ field }) => (
             <TextField
               label="Quantity"
@@ -262,11 +279,11 @@ const IngredientsCreateForm: React.FC = () => {
             <FormControl error={!!errors.type} className={classes.formControl}>
               <InputLabel className={classes.inputLabel}>Unit</InputLabel>
               <Select {...field}>
-                <MenuItem value="KG">kg</MenuItem>
-                <MenuItem value="GM">g</MenuItem>
+                <MenuItem value="kg">KG</MenuItem>
+                <MenuItem value="gm">GM</MenuItem>
                 <MenuItem value="L">L</MenuItem>
-                <MenuItem value="ML">ml</MenuItem>
-                <MenuItem value="COUNT">Count</MenuItem>
+                <MenuItem value="ml">ML</MenuItem>
+                <MenuItem value="count">COUNT</MenuItem>
               </Select>
               <FormHelperText>{errors.type?.message}</FormHelperText>
             </FormControl>
@@ -288,16 +305,16 @@ const IngredientsCreateForm: React.FC = () => {
             />
           )}
         />
-
-        <Controller
+        
+<Controller
           name="image"
           control={control}
           defaultValue={null}
           rules={{ required: "Picture is required" }}
           render={() => (
             <section>
-              {/* Apply the border style when a file is being dragged */}
-              <div
+               {/* Apply the border style when a file is being dragged */}
+        <div
                 {...getRootProps()}
                 style={{
                   border: isDragging
@@ -320,24 +337,24 @@ const IngredientsCreateForm: React.FC = () => {
               </div>
             </section>
           )}
-        />
+        />  
+
         {/* {isPictureUploaded && <p>Picture uploaded</p>} */}
         <Snackbar
-        
           open={isSnackbarOpen}
           autoHideDuration={3000}
           onClose={handleCloseSnackbar}
         >
           <MuiAlert
-          className={classes.alert}
+            className={classes.alert}
             onClose={handleCloseSnackbar}
             severity="success"
             elevation={6}
             variant="filled"
           >
-            Picture uploaded
+            Picture added
           </MuiAlert>
-        </Snackbar>
+        </Snackbar> 
 
         <Box className={classes.boxItem}>
           <Button

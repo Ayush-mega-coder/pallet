@@ -6,52 +6,60 @@ import { useNavigate } from "react-router-dom";
 import { Typography } from "@mui/material";
 import styled from "@emotion/styled";
 import axios from "axios";
+import CircularProgress from "@mui/material/CircularProgress"; // Import CircularProgress for the loader
 
 const TypographyUser = styled(Typography)({
   margin:'10px',
   fontWeight: "bold",
 })
 
+const LoadingComponent: React.FC = () => {
+  return (
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}>
+      <CircularProgress />
+    </div>
+  );
+};
+
 const UserList: React.FC = () => {
   const [users, setUsers] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true); // Add a loading state
   const navigate = useNavigate();
   
   useEffect(() => {
-
     const fetchUsers = async () => {
       try {
+        const token = document.cookie.replace(
+          /(?:(?:^|.*;\s*)authToken\s*=\s*([^;]*).*$)|^.*$/,
+          '$1'
+        );
 
-       const token = document.cookie.replace(
-      /(?:(?:^|.*;\s*)authToken\s*=\s*([^;]*).*$)|^.*$/,
-      '$1'
-    );
+        const response = await axios.get(
+          'http://localhost:5000/api/users',
+          {
+            headers: {
+              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY0YzFlYjMyNTg0Mjk4YjUxNjI1YWNkZiIsIm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AcGFsbGF0ZS5jb20iLCJhY3RpdmUiOnRydWUsInBhc3N3b3JkIjoiJDJiJDEyJE9sbHBmSmR3akNHV2F3cnNJeHgwSnVqVUxOZ2NsTXpSejUwVjZwN2V3elFJMERiRTR2LjdtIiwicm9sZSI6IkFETUlOIiwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yMFQxMjoyMjozOC42NThaIiwidXBkYXRlZEF0IjoiMjAyMy0wNy0yMVQwOToyNToyNS4yOTdaIiwiX192IjowfSwiaWF0IjoxNjkwODA2OTk0fQ.7vspbw1A1N019ewYYojPHS8AyMlHzlxk134f_c5GlUI`,
+              "ngrok-skip-browser-warning": true,
+            },
+          }
+        );
 
-
-    const response = await axios.get(
-      'http://localhost:5000/api/users',
-      {
-        headers: {
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY0YzFlYjMyNTg0Mjk4YjUxNjI1YWNkZiIsIm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AcGFsbGF0ZS5jb20iLCJhY3RpdmUiOnRydWUsInBhc3N3b3JkIjoiJDJiJDEyJE9sbHBmSmR3akNHV2F3cnNJeHgwSnVqVUxOZ2NsTXpSejUwVjZwN2V3elFJMERiRTR2LjdtIiwicm9sZSI6IkFETUlOIiwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yMFQxMjoyMjozOC42NThaIiwidXBkYXRlZEF0IjoiMjAyMy0wNy0yMVQwOToyNToyNS4yOTdaIiwiX192IjowfSwiaWF0IjoxNjkwODA2OTk0fQ.7vspbw1A1N019ewYYojPHS8AyMlHzlxk134f_c5GlUI`,
-          "ngrok-skip-browser-warning": true,
-        },
-      }
-    );
-
-        const data = response.data.data.users; 
-        console.log(data)
+        const data = response.data.data.users;
         setUsers(data);
+        setLoading(false); // Set loading to false once the data is fetched
       } catch (error) {
         console.error("Error fetching users:", error);
         // Handle the error appropriately (e.g., show an error message)
+        setLoading(false); // Set loading to false in case of error as well
       }
     };
     fetchUsers();
   }, []);
+
   const columns: GridColDef[] = [
-    { field: "_id", headerName: "ID", width:200 },
+    { field: "_id", headerName: "ID", width: 200 },
     { field: "name", headerName: "Name", width: 200, sortable: true },
     { field: "email", headerName: "Email", width: 200, sortable: true },
-
   ];
 
   const handleDeleteClick = () => {
@@ -63,18 +71,22 @@ const UserList: React.FC = () => {
   };
 
   return (
-    <div style={{ marginLeft:'250px', marginTop:'70px' }}>
+    <div style={{ marginLeft: '250px', marginTop: '70px' }}>
       <TypographyUser>
         Users
       </TypographyUser>
-    <div style={{ height: 400, width: "95%",boxShadow: '0px 2px 4px rgba(4, 4, 1, 0.4)',borderRadius: "8px", }}>
-      <DataGrid
-        columns={columns}
-        rows={users}
-        pagination
-        onRowClick={handleRowClick}
-        getRowId={(row) => row._id}
-      />
+      <div style={{ height: 400, width: "95%", boxShadow: '0px 2px 4px rgba(4, 4, 1, 0.4)', borderRadius: "8px" }}>
+        {loading ? (
+          <LoadingComponent /> // Show the loader if loading is true
+        ) : (
+          <DataGrid
+            columns={columns}
+            rows={users}
+            pagination
+            onRowClick={handleRowClick}
+            getRowId={(row) => row._id}
+          />
+        )}
       </div>
     </div>
   );
