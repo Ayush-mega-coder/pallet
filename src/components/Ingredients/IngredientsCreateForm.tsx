@@ -1,19 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { styled } from "@mui/material/styles";
-import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
-
-
-import {
-  Button,
-  Box,
-  TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  FormHelperText,
-} from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import AsyncSelect from "react-select/async";
 import AddIcon from "@mui/icons-material/Add";
@@ -26,15 +13,24 @@ import { userOptions } from "./data";
 import { useDropzone } from "react-dropzone";
 import { makeStyles } from "@mui/styles";
 
+import {
+  Button,
+  Box,
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  FormHelperText,
+} from "@mui/material";
+
 const useStyles = makeStyles((theme) => ({
   container: {
-    // margin: "20px",
     marginTop: "60px",
     marginLeft: "100px",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    // backgroundColor:'red',
     justifyContent: "center",
     gap: "20px",
     "& .MuiTextField-root, & .MuiFormControl-root": {
@@ -53,20 +49,10 @@ const useStyles = makeStyles((theme) => ({
     margin: "5px",
     border: "2px solid blue",
     color: "black",
-    // "&:hover": {
-    //   backgroundColor: "white",
-    //   color: "black",
-    // },
   },
   button1: {
-    // Move the button to the right-bottom
-
     color: "black",
     backgroundColor: "white",
-    // "&:hover": {
-    //   backgroundColor: "white",
-    //   color: "black",
-    // },
   },
   button2: {
     backgroundColor: "#002D62",
@@ -77,11 +63,9 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   boxItem: {
-    // marginTop: "-40px",
     display: "flex",
     justifyContent: "space-between",
 
-    // width: "550px",
     width: "50%",
   },
 
@@ -92,11 +76,18 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: "600px",
     backgroundColor: "#002D62",
   },
-  inputLabel: {},
+  inputLabel: {
+    position: "absolute",
+    backgroundColor: "white",
+    zIndex: 1,
+  },
+
 }));
+
 const StyledAsyncSelect = styled(AsyncSelect)({
   width: "50%",
 });
+
 interface FormValues {
   userId: string;
   name: string;
@@ -104,13 +95,11 @@ interface FormValues {
   expiry: string;
   type: string;
   image: File | string | null;
-  // base64Image: string | null;
 }
 
 const IngredientsCreateForm: React.FC = () => {
   const classes = useStyles();
   const [isDragging, setIsDragging] = useState(false);
-
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -124,34 +113,21 @@ const IngredientsCreateForm: React.FC = () => {
 
   const onSubmit = async (data: FormValues) => {
     try {
-      // if (data.image instanceof File) {
-      //   const imageBase64 = await getBase64String(data.image);
-      //   data.image = imageBase64;
-      // }
-      console.log(data.image)
       data.quantity = parseFloat(data.quantity.toString());
       data.image = "https://exmple.com/image";
       console.log("Form values:", data);
 
-
       const config = {
         headers: {
           Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY0YmZkZDg0Y2E0YzM1NTFjOTU2ZTEzZSIsIm5hbWUiOiJzaGEiLCJlbWFpbCI6InNoYW1pbGtvdHRhOTlAZ21haWwuY29tIiwiYWN0aXZlIjp0cnVlLCJwYXNzd29yZCI6IiQyYiQxMiRXTmtLdll3eGxKdkNHRC5lSi5WNFBlY0FqeWR4SVphZmV1VWtNLjlURmNud3RCcXZrckRSNiIsInJvbGUiOiJVU0VSIiwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yNVQxNDozNDo0NC4yMjFaIiwidXBkYXRlZEF0IjoiMjAyMy0wNy0yNVQxNDozNDo0NC4yMjFaIiwiX192IjowfSwiaWF0IjoxNjkwMjk2MzU3fQ.xZn1KSQ6prK6v39xs5iVFgDUAKC1ipHmCmZ6b7K-b6o", // Your access token here
+            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY0YmZkZDg0Y2E0YzM1NTFjOTU2ZTEzZSIsIm5hbWUiOiJzaGEiLCJlbWFpbCI6InNoYW1pbGtvdHRhOTlAZ21haWwuY29tIiwiYWN0aXZlIjp0cnVlLCJwYXNzd29yZCI6IiQyYiQxMiRXTmtLdll3eGxKdkNHRC5lSi5WNFBlY0FqeWR4SVphZmV1VWtNLjlURmNud3RCcXZrckRSNiIsInJvbGUiOiJVU0VSIiwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yNVQxNDozNDo0NC4yMjFaIiwidXBkYXRlZEF0IjoiMjAyMy0wNy0yNVQxNDozNDo0NC4yMjFaIiwiX192IjowfSwiaWF0IjoxNjkwMjk2MzU3fQ.xZn1KSQ6prK6v39xs5iVFgDUAKC1ipHmCmZ6b7K-b6o",
         },
       };
 
-      // Send a POST request to your API endpoint with data and configuration
-      await axios.post(
-        "http://localhost:5000/api/ingredients",
-        data,
-        config // Pass the configuration as the third argument
-      );
+      await axios.post("http://localhost:5000/api/ingredients", data, config);
 
-      // Show a success snackbar
       setIsSnackbarOpen(true);
-      navigate('/ingredients')
-
+      navigate("/ingredients");
 
       reset({
         ...data,
@@ -163,29 +139,12 @@ const IngredientsCreateForm: React.FC = () => {
       });
     } catch (error) {
       console.error("Error submitting form:", error);
-      
     }
   };
-  const getBase64String = (file: File) => {
-    return new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (typeof reader.result === "string") {
-          resolve(reader.result);
-        } else {
-          reject(new Error("Failed to read file."));
-        }
-      };
-      reader.readAsDataURL(file);
-    });
-  };
+
   const handleDragEnter = useCallback(() => {
     setIsDragging(true);
   }, []);
-
-  const handleAddMoreButtonClick = () => {
-    console.log("val");
-  };
 
   const filterColors = (inputValue: string) => {
     return userOptions.filter((i) =>
@@ -201,6 +160,7 @@ const IngredientsCreateForm: React.FC = () => {
       callback(filterColors(inputValue));
     }, 1000);
   };
+
   const handleDrop = useCallback(
     (acceptedFiles: File[]) => {
       if (acceptedFiles && acceptedFiles.length > 0) {
@@ -208,20 +168,19 @@ const IngredientsCreateForm: React.FC = () => {
         console.log("Selected picture:", selectedFile);
         setValue("image", selectedFile);
 
-        // Show the Snackbar with the "Picture uploaded" message
         setIsSnackbarOpen(true);
       }
     },
     [setValue]
   );
+
   const handleCloseSnackbar = () => {
     setIsSnackbarOpen(false);
   };
 
-
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: handleDrop,
-    onDragEnter: handleDragEnter, // Add the drag enter event handler
+    onDragEnter: handleDragEnter,
     onDragLeave: () => setIsDragging(false),
   });
 
@@ -257,7 +216,10 @@ const IngredientsCreateForm: React.FC = () => {
           defaultValue={0}
           rules={{
             required: "Quantity is required",
-            min: { value: 0, message: "Quantity must be greater than or equal to 0" },
+            min: {
+              value: 0,
+              message: "Quantity must be greater than or equal to 0",
+            },
           }}
           render={({ field }) => (
             <TextField
@@ -277,13 +239,19 @@ const IngredientsCreateForm: React.FC = () => {
           rules={{ required: "Unit is required" }}
           render={({ field }) => (
             <FormControl error={!!errors.type} className={classes.formControl}>
-              <InputLabel className={classes.inputLabel}>Unit</InputLabel>
+              <InputLabel
+                htmlFor="type"
+                className={`${classes.inputLabel}
+        }`}
+              >
+                Unit
+              </InputLabel>
               <Select {...field}>
-                <MenuItem value="kg">KG</MenuItem>
-                <MenuItem value="gm">GM</MenuItem>
-                <MenuItem value="L">L</MenuItem>
-                <MenuItem value="ml">ML</MenuItem>
-                <MenuItem value="count">COUNT</MenuItem>
+                <MenuItem value="KG">KG</MenuItem>
+                <MenuItem value="G">GM</MenuItem>
+                <MenuItem value="L">LT</MenuItem>
+                <MenuItem value="ML">ML</MenuItem>
+                <MenuItem value="COUNT">COUNT</MenuItem>
               </Select>
               <FormHelperText>{errors.type?.message}</FormHelperText>
             </FormControl>
@@ -297,7 +265,7 @@ const IngredientsCreateForm: React.FC = () => {
           rules={{ required: "Date is required" }}
           render={({ field }) => (
             <TextField
-              label="Date"
+              label="Expiry"
               type="date"
               {...field}
               error={!!errors.expiry}
@@ -305,16 +273,15 @@ const IngredientsCreateForm: React.FC = () => {
             />
           )}
         />
-        
-<Controller
+
+        <Controller
           name="image"
           control={control}
           defaultValue={null}
           rules={{ required: "Picture is required" }}
           render={() => (
             <section>
-               {/* Apply the border style when a file is being dragged */}
-        <div
+              <div
                 {...getRootProps()}
                 style={{
                   border: isDragging
@@ -337,9 +304,8 @@ const IngredientsCreateForm: React.FC = () => {
               </div>
             </section>
           )}
-        />  
+        />
 
-        {/* {isPictureUploaded && <p>Picture uploaded</p>} */}
         <Snackbar
           open={isSnackbarOpen}
           autoHideDuration={3000}
@@ -354,7 +320,7 @@ const IngredientsCreateForm: React.FC = () => {
           >
             Picture added
           </MuiAlert>
-        </Snackbar> 
+        </Snackbar>
 
         <Box className={classes.boxItem}>
           <Button

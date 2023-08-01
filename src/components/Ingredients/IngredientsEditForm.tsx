@@ -1,11 +1,15 @@
 
-import React, { useEffect, useState,useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
-import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-
-
+import { styled } from "@mui/material/styles";
+import { useForm, Controller } from "react-hook-form";
+import axios from 'axios'
+import AsyncSelect from "react-select/async";
+import SaveIcon from "@mui/icons-material/Save";
+import AddIcon from "@mui/icons-material/Add";
+import { makeStyles } from "@mui/styles";
+import { userOptions } from "./data";
 import {
   Button,
   Box,
@@ -16,24 +20,9 @@ import {
   InputLabel,
   FormHelperText,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
-import { useForm, Controller } from "react-hook-form";
-import axios from 'axios'
-
-import AsyncSelect from "react-select/async";
-
-import SaveIcon from "@mui/icons-material/Save";
-import AddIcon from "@mui/icons-material/Add";
-import { useDropzone } from "react-dropzone";
-import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
-import { makeStyles } from "@mui/styles";
-
-import { userOptions } from "./data";
-import Add from "@mui/icons-material/Add";
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    // margin: "20px",
     marginTop: "60px",
     marginLeft: "100px",
     display: "flex",
@@ -63,8 +52,6 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   button1: {
-    // Move the button to the right-bottom
-
     color: "black",
     backgroundColor: "white",
     "&:hover": {
@@ -77,23 +64,21 @@ const useStyles = makeStyles((theme) => ({
 
     color: "white",
     "&:hover": {
-      // backgroundColor: "white",
-      color: "black",
+      color: "white",
     },
   },
   boxItem: {
-    // marginTop: "-40px",
     display: "flex",
     justifyContent: "space-between",
-
-    // width: "550px",
     width: "50%",
   },
-
   users: {
     zIndex: 100,
   },
   inputLabel: {
+    position: "absolute",
+    backgroundColor:'white',
+    zIndex: 1,
     
   },
 }));
@@ -103,7 +88,7 @@ interface Ingredient {
   userId: string;
   name: string;
   quantity: number;
-  date: string;
+  expiry: string;
   type: string;
   picture: File | null;
 }
@@ -112,30 +97,25 @@ interface FormValues {
   userId: string;
   name: string;
   quantity: number;
-  date: string;
+  expiry: string;
   type: string;
   picture: File | null;
 }
 
 interface IngredientsEditFormProps {
-  ingredient: Ingredient;
   onSave: (data: FormValues) => void;
 }
 
 const StyledAsyncSelect = styled(AsyncSelect)({
   width: "50%",
-  // Add other styles here to match the TextField
-  // For example: fontFamily, fontSize, padding, etc.
+  
 });
 
 const IngredientsEditForm: React.FC<IngredientsEditFormProps> = ({
-  
   onSave,
 }) => {
  
-const { ingredientId } = useParams<{ ingredientId: string }>();
-
-  // Create a state to hold the fetched ingredient data
+  const { ingredientId } = useParams<{ ingredientId: string }>();
   const [ingredientData, setIngredientData] = useState<Ingredient | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
@@ -145,14 +125,13 @@ const { ingredientId } = useParams<{ ingredientId: string }>();
     handleSubmit,
     control,
     reset,
-    setValue,
+    
     formState: { errors },
   } = useForm<FormValues>();
 
   useEffect(() => {
     const fetchIngredientData = async () => {
       try {
-        // Fetch the ingredient data based on the ingredientId
         const response = await axios.get(
           `http://localhost:5000/api/ingredients/${ingredientId}`,
           {
@@ -162,9 +141,7 @@ const { ingredientId } = useParams<{ ingredientId: string }>();
             },
           }
         );
-
         const data = response.data.data.ingredient; 
-        console.log(data)
         setIngredientData(data);
         setLoading(false);
       } catch (error) {
@@ -175,14 +152,14 @@ const { ingredientId } = useParams<{ ingredientId: string }>();
 
     fetchIngredientData();
   }, [ingredientId]);
-  useEffect(() => {
 
+  useEffect(() => {
     if (ingredientData) {
       reset({
         // userId: ingredientData.userId,
         name: ingredientData.name,
         quantity: ingredientData.quantity,
-        date: ingredientData.date,
+        expiry: ingredientData.expiry.split("T")[0],
         type: ingredientData.type,
         // picture: ingredientData.picture,
       });
@@ -191,7 +168,6 @@ const { ingredientId } = useParams<{ ingredientId: string }>();
 
   const onSubmit = async (data: FormValues) => {
     try {
-
       const response = await axios.put(
         `https://8292-150-129-102-218.ngrok-free.app/api/ingredients/${ingredientId}`,
         data,
@@ -201,19 +177,12 @@ const { ingredientId } = useParams<{ ingredientId: string }>();
           },
         }
       );
-
       console.log("Updated ingredient:", response.data);
-
-      // Call the onSave function to inform the parent component that the data is saved
       onSave(data);
       navigate('/ingredients');
     } catch (error) {
       console.error("Error updating ingredient:", error);
     }
-  };
-
-  const handleAddMoreButtonClick = () => {
-    console.log("val");
   };
 
   const filterColors = (inputValue: string) => {
@@ -230,35 +199,18 @@ const { ingredientId } = useParams<{ ingredientId: string }>();
       callback(filterColors(inputValue));
     }, 1000);
   };
-  // const handleDrop = useCallback(
-  //   (acceptedFiles: File[]) => {
-  //     if (acceptedFiles && acceptedFiles.length > 0) {
-  //       const selectedFile = acceptedFiles[0];
-  //       console.log("Selected picture:", selectedFile);
-  //       setValue("picture", selectedFile);
-  //     }
-  //   },
-  //   [setValue]
-  // );
-  // // Hook from react-dropzone to handle file drop and selection
-  // const { getRootProps, getInputProps } = useDropzone({
-  //   onDrop: handleDrop,
-  // });
 
   return (
     <div>
       <div className={classes.container}>
-      
             <StyledAsyncSelect
               cacheOptions
               defaultOptions
               loadOptions={loadOptions}
-          
               placeholder="UserID"
               className={classes.users}
             />
-         
-
+            
         <Controller
           name="name"
           control={control}
@@ -297,13 +249,19 @@ const { ingredientId } = useParams<{ ingredientId: string }>();
           rules={{ required: "Unit is required" }}
           render={({ field }) => (
             <FormControl error={!!errors.type}>
-              <InputLabel>Unit</InputLabel>
+              <InputLabel
+        htmlFor="type"
+        className={`${classes.inputLabel} 
+        }`}
+      >
+        Unit
+        </InputLabel>
               <Select {...field}>
-                <MenuItem value="kg">KG</MenuItem>
-                <MenuItem value="gm">G</MenuItem>
+                <MenuItem value="KG">KG</MenuItem>
+                <MenuItem value="G">GM</MenuItem>
                 <MenuItem value="L">LT</MenuItem>
-                <MenuItem value="ml">ML</MenuItem>
-                <MenuItem value="count">COUNT</MenuItem>
+                <MenuItem value="ML">ML</MenuItem>
+                <MenuItem value="COUNT">COUNT</MenuItem>
 
               </Select>
               <FormHelperText>{errors.type?.message}</FormHelperText>
@@ -312,7 +270,7 @@ const { ingredientId } = useParams<{ ingredientId: string }>();
         />
 
         <Controller
-          name="date"
+          name="expiry"
           control={control}
           defaultValue={new Date().toISOString().slice(0, 10)}
           rules={{ required: "Date is required" }}
@@ -321,33 +279,11 @@ const { ingredientId } = useParams<{ ingredientId: string }>();
               label="Date"
               type="date"
               {...field}
-              error={!!errors.date}
-              helperText={errors.date?.message}
+              error={!!errors.expiry}
+              helperText={errors.expiry?.message}
             />
           )}
         />
-
-        {/* <Controller
-          name="picture"
-          control={control}
-          defaultValue={null}
-          rules={{ required: "Picture is required" }}
-          render={() => (
-            <section>
-              <div {...getRootProps()}>
-                <input {...getInputProps()} />
-
-                <Button
-                  className={classes.button}
-                  startIcon={<AddAPhotoIcon />}
-                >
-                  Upload or Drag Pictures
-                </Button>
-              </div>
-            </section>
-          )}
-        /> */}
-      
 
       <Box mt={2} className={classes.boxItem}>
         <Button
@@ -361,7 +297,7 @@ const { ingredientId } = useParams<{ ingredientId: string }>();
         </Button>
         <Button
           color="primary"
-          onClick={handleAddMoreButtonClick}
+          onClick={handleSubmit(onSubmit)}
           startIcon={<AddIcon />}
           className={classes.button1}
         >

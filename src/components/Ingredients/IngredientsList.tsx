@@ -1,64 +1,44 @@
 import React, { useEffect, useState } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { styled } from "@mui/material/styles";
-
 import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
-
-import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
+import { Delete, Edit } from "@mui/icons-material";
 import {
   Button,
   Box,
-  TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  FormHelperText,
   IconButton,
-  CircularProgress, // Import CircularProgress for the loader
+  CircularProgress, 
 } from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
+
+
 const AddBox = styled(Box)({
   display: "flex",
   justifyContent: "flex-end",
   marginTop: "38px",
   marginRight: "50px",
 });
-const StyledButton = styled(Button)({
-  margin: "10px",
-  backgroundColor: "white",
-  color: "black",
-  "&:hover": {
-    backgroundColor: "white",
-    color: "black",
-  },
-});
+
+
 const StyledButtonCreate = styled(Button)({
   marginTop: "5px",
-
   color: "black",
-
   "&:hover": {
     color: "black",
   },
 });
+
 const IngredientsList: React.FC = () => {
   const [ingredients, setIngredients] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(true); // Add a loading state
-
+  const [loading, setLoading] = useState<boolean>(true); 
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const navigate = useNavigate();
   const [isBulkDeleteVisible, setBulkDeleteVisible] = useState(false);
+  
   useEffect(() => {
     const fetchIngredients = async () => {
       try {
-        const token = document.cookie.replace(
-          /(?:(?:^|.*;\s*)authToken\s*=\s*([^;]*).*$)|^.*$/,
-          "$1"
-        );
-
         const response = await axios.get(
           "http://localhost:5000/api/ingredients",
           {
@@ -71,21 +51,18 @@ const IngredientsList: React.FC = () => {
 
         const data = response.data.data.ingredients;
         setIngredients(data);
-        setLoading(false); // Set loading to false once the data is fetched
-        // console.log(data);
-        // console.log(ingredients)
+        setLoading(false);
+  
       } catch (error) {
         console.error("Error fetching ingredients:", error);
-        setLoading(false); // Set loading to false in case of error as well
+        setLoading(false); 
       }
     };
-
     fetchIngredients();
   }, []);
 
-
   const columns: GridColDef[] = [
-    { field: "_id", headerName: "ID", width: 80 },
+    { field: "_id", headerName: "ID", width: 150 },
     {
       field: "name",
       headerName: "Name",
@@ -97,7 +74,7 @@ const IngredientsList: React.FC = () => {
         );
       },
     },
-    { field: "quantity", headerName: "Quantity", width: 100, sortable: true },
+    { field: "quantity", headerName: "Quantity", width: 150, sortable: true },
     {
       field: "expiry",
       headerName: "Date",
@@ -111,12 +88,12 @@ const IngredientsList: React.FC = () => {
         return formattedDate;
       },
     },
-    { field: "type", headerName: "Unit", width: 100, sortable: true },
-    { field: "image", headerName: "Picture", width: 150 },
+    { field: "type", headerName: "Unit", width: 150, sortable: true },
+    { field: "image", headerName: "Picture", width: 200 },
     {
       field: "delete",
       headerName: "Actions",
-      width: 100,
+      width: 200,
       sortable: false,
       renderCell: (params) => (
         <Box display="flex" alignItems="center" gap={2}>
@@ -125,7 +102,7 @@ const IngredientsList: React.FC = () => {
           </IconButton>
           <IconButton onClick={(event) => handleDeleteOneClick([params.id as string], event)}>
       <Delete />
-            <Delete />
+            
           </IconButton>
         </Box>
       ),
@@ -138,9 +115,11 @@ const IngredientsList: React.FC = () => {
     setSelectedRows([]);
     setBulkDeleteVisible(false);
   };
+
   const handleCreateClick = () => {
     navigate("/ingredients/create");
   };
+
   const handleDeleteOneClick = (ingredientIds: string[], clickEvent: React.MouseEvent) => {
     clickEvent.stopPropagation();
     axios
@@ -154,7 +133,6 @@ const IngredientsList: React.FC = () => {
         }
       })
       .then((response) => {
-
         setIngredients((prevIngredients) =>
           prevIngredients.filter(
             (ingredient) => !ingredientIds.includes(ingredient._id)
@@ -165,19 +143,19 @@ const IngredientsList: React.FC = () => {
         console.error("Error while deleting ingredients:", error);
       });
   };
+
   const handleEditClick = (ingredientId:string,clickEvent: React.MouseEvent) => {
     clickEvent.stopPropagation();
-
     navigate(`/ingredients/${ingredientId}/editForm`);
   };
-  const handleRowSelectionModelChange = (selectionModel: any) => {
 
+  const handleRowSelectionModelChange = (selectionModel: any) => {
     setSelectedRows(selectionModel);
     setBulkDeleteVisible(selectionModel.length > 0);
   };
+
   const handleRowClick = (params: any) => {
     const ingredientId = params.id;
-
     navigate(`/ingredients/${ingredientId}/show`);
   };
 
@@ -198,8 +176,8 @@ const IngredientsList: React.FC = () => {
         style={{
           marginLeft: "230px",
           marginTop: "0px",
-          height: "80%",
-          width: "80%",
+          height: "500px",
+          width: "83%",
           boxShadow: "0px 2px 4px rgba(4, 4, 1, 0.4)",
           borderRadius: "8px",
         }}
@@ -210,7 +188,7 @@ const IngredientsList: React.FC = () => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              height: "80%",
+              height: "100%",
             }}
           >
             <CircularProgress />
@@ -222,7 +200,7 @@ const IngredientsList: React.FC = () => {
             checkboxSelection
             pagination
             onRowClick={handleRowClick}
-            onRowSelectionModelChange={handleRowSelectionModelChange} // Changed the event handler name to onSelectionModelChange
+            onRowSelectionModelChange={handleRowSelectionModelChange}
             getRowId={(row) => row._id}
           />
         )}

@@ -3,19 +3,18 @@ import { List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleIcon from "@mui/icons-material/People";
 import FastfoodIcon from "@mui/icons-material/Fastfood";
-import LogoutIcon from "@mui/icons-material/Logout";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 
 const SidebarContainer = styled("div")({
   width: "210px",
-  backgroundColor: 'white',
+  backgroundColor: "white",
   position: "fixed",
   top: 0,
   left: 0,
   bottom: 0,
-  color: 'black',
-  boxShadow: "4px 0 10px rgba(0, 0, 0, 0.1)", 
+  color: "black",
+  boxShadow: "4px 0 10px rgba(0, 0, 0, 0.1)",
   overflow: "hidden",
 });
 
@@ -31,15 +30,29 @@ const SidebarItem = styled(ListItem)(({ theme }) => ({
     "&:hover": {
       backgroundColor: theme.palette.primary.dark,
       color: theme.palette.common.white,
+      "& .MuiListItemIcon-root": {
+        color: theme.palette.common.white,
+      },
     },
   },
   cursor: "pointer",
   "&:hover": {
     backgroundColor: theme.palette.primary.dark,
     color: theme.palette.common.white,
+    "& .MuiListItemIcon-root": {
+      color: theme.palette.common.white,
+    },
   },
 }));
-
+const StyledListItemIcon = styled(ListItemIcon)(({ theme }) => ({
+  color: "inherit",
+  "&.Mui-selected": {
+    color: theme.palette.common.white,
+  },
+  "&:hover": {
+    color: theme.palette.common.white,
+  },
+}));
 interface SidebarProps {
   onClose: () => void;
 }
@@ -66,25 +79,33 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
   return (
     <SidebarContainer onClick={onClose}>
       <SidebarList>
-        <SidebarItem selected={selectedItem === "dashboard"} onClick={handleDashboardClick}>
-          <ListItemIcon>
+        <SidebarItem
+          selected={selectedItem === "dashboard"}
+          onClick={handleDashboardClick}
+        >
+          <StyledListItemIcon>
             <DashboardIcon />
-          </ListItemIcon>
+          </StyledListItemIcon>
           <ListItemText primary="Dashboard" />
         </SidebarItem>
-        <SidebarItem selected={selectedItem === "users"} onClick={handleUserClick}>
-          <ListItemIcon>
+        <SidebarItem
+          selected={selectedItem === "users"}
+          onClick={handleUserClick}
+        >
+          <StyledListItemIcon>
             <PeopleIcon />
-          </ListItemIcon>
+          </StyledListItemIcon>
           <ListItemText primary="Users" />
         </SidebarItem>
-        <SidebarItem selected={selectedItem === "ingredients"} onClick={handleIngredientsClickButton}>
-          <ListItemIcon>
+        <SidebarItem
+          selected={selectedItem === "ingredients"}
+          onClick={handleIngredientsClickButton}
+        >
+          <StyledListItemIcon>
             <FastfoodIcon />
-          </ListItemIcon>
+          </StyledListItemIcon>
           <ListItemText primary="Ingredients" />
         </SidebarItem>
-      
       </SidebarList>
     </SidebarContainer>
   );

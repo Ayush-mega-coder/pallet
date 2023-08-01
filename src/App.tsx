@@ -7,18 +7,7 @@ import IngredientsShow from "./components/Ingredients/IngredientsShow";
 import UserList from "./components/user/UserList";
 import UserShow from "./components/user/UserShow";
 import Layout from "./components/Layout";
-// import UserView from "./components/user/UserView";
 function App() {
-  const ingredientData = {
-    id: 1,
-    userId: "user123",
-    name: "Onion",
-    quantity: 100,
-    date: "2023-07-25",
-    type: "",
-    picture: null,
-  };
-
   const handleSave = (data: any) => {
     console.log("Form data:", data);
   };
@@ -37,7 +26,6 @@ function App() {
                 path=":ingredientId/editForm"
                 element={
                   <IngredientsEditForm
-                    ingredient={ingredientData}
                     onSave={handleSave}
                   />
                 }

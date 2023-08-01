@@ -1,11 +1,17 @@
 import React, { useState } from "react";
+import MenuIcon from "@mui/icons-material/Menu";
+import { styled } from "@mui/material/styles";
+import Sidebar from "./Sidebar";
+import Login from "./Login"; 
+
+import { useNavigate } from "react-router-dom";
 import {
   AppBar,
   Toolbar,
   IconButton,
   Typography,
   Avatar,
-  Box,
+  
   Menu,
   MenuItem,
   Dialog,
@@ -14,56 +20,32 @@ import {
   DialogActions,
   Button,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import { styled } from "@mui/material/styles";
-import Sidebar from "./Sidebar";
-import Login from "./Login"; // Import your Login component here
-
-import { useNavigate } from "react-router-dom";
 
 
-const StyledAppBar = styled(AppBar)({
-  background: "#002D62",
+const StyledAppBar = styled(AppBar)(({theme})=>({
+  background: theme.palette.primary.dark,
   zIndex: 1300,
   width: "100%",
-  color: "white",
+  color: theme.palette.common.white,
   height: "57px",
-});
+})
+);
 
-const HeaderContainer = styled(Box)({
-  width: "400px",
-  margin: "auto",
-  alignContent: "center",
-  display: "flex",
-  marginTop: "90px",
-  marginBottom: "30px",
-  justifyContent: "center",
-  fontSize: "40px",
-});
-const StyledButton = styled(Button)({
-  backgroundColor:'#002D62',
+const StyledButton = styled(Button)(({theme})=>({
+  backgroundColor:theme.palette.primary.dark,
   color:'white',
   margin:'10px',
  
-});
-const MenuItemButton = styled(MenuItem)({
-  backgroundColor:'#002D62',
-  color:'white',
-  
-  "&.Mui-selected": {
-    backgroundColor:'#002D62',
-  color:'white',
-  },
 })
+)
 
 const Header: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [showLoginPopup, setShowLoginPopup] = useState(false); // Track login popup visibility
-  const [showLogoutConfirmation, setShowLogoutConfirmation] = useState(false); // Track logout confirmation dialog visibility
+  const [showLoginPopup, setShowLoginPopup] = useState(false); 
+  const [showLogoutConfirmation, setShowLogoutConfirmation] = useState(false); 
   const LOGIN_STATUS_KEY = "isLoggedIn";
   const navigate = useNavigate();
-
 
   const handleSidebarOpen = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -123,10 +105,26 @@ const Header: React.FC = () => {
 
       <Sidebar onClose={handleSidebarClose} />
 
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-        {/* <MenuItemButton onClick={handleLogout} >Logout</MenuItemButton> */}
-        <MenuItem onClick={handleLogout} > Logout
-        {/* <StyledButton onClick={handleLogout} variant="contained" >Logout</StyledButton> */}
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        PaperProps={{
+          style: {
+            backgroundColor: "#002D62",
+          },
+        }}
+      >
+        <MenuItem onClick={handleLogout}>
+          <Typography textAlign="center" color='white'>Logout</Typography>
         </MenuItem>
       </Menu>
 
@@ -137,7 +135,7 @@ const Header: React.FC = () => {
       <Dialog open={showLogoutConfirmation} onClose={() => handleLogoutConfirmation(false)}>
         <DialogTitle>Are you sure you want to logout?</DialogTitle>
         <DialogContent>
-          {/* You can add more details or a message here */}
+          
         </DialogContent>
         <DialogActions>
           <StyledButton onClick={() => handleLogoutConfirmation(false)} variant="contained">

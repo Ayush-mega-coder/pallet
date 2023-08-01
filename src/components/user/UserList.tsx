@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import Button from "@mui/material/Button";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
 import { Typography } from "@mui/material";
 import styled from "@emotion/styled";
 import axios from "axios";
-import CircularProgress from "@mui/material/CircularProgress"; // Import CircularProgress for the loader
+import CircularProgress from "@mui/material/CircularProgress";
 
 const TypographyUser = styled(Typography)({
   margin:'10px',
@@ -23,17 +21,12 @@ const LoadingComponent: React.FC = () => {
 
 const UserList: React.FC = () => {
   const [users, setUsers] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(true); // Add a loading state
+  const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
   
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const token = document.cookie.replace(
-          /(?:(?:^|.*;\s*)authToken\s*=\s*([^;]*).*$)|^.*$/,
-          '$1'
-        );
-
         const response = await axios.get(
           'http://localhost:5000/api/users',
           {
@@ -46,25 +39,21 @@ const UserList: React.FC = () => {
 
         const data = response.data.data.users;
         setUsers(data);
-        setLoading(false); // Set loading to false once the data is fetched
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching users:", error);
-        // Handle the error appropriately (e.g., show an error message)
-        setLoading(false); // Set loading to false in case of error as well
+        setLoading(false);
       }
     };
     fetchUsers();
   }, []);
 
   const columns: GridColDef[] = [
-    { field: "_id", headerName: "ID", width: 200 },
-    { field: "name", headerName: "Name", width: 200, sortable: true },
-    { field: "email", headerName: "Email", width: 200, sortable: true },
+    { field: "_id", headerName: "ID", width: 350 },
+    { field: "name", headerName: "Name", width: 350, sortable: true },
+    { field: "email", headerName: "Email", width: 350, sortable: true },
   ];
 
-  const handleDeleteClick = () => {
-    setUsers([]);
-  };
   const handleRowClick = (params: any) => {
     const userId = params.id;
     navigate(`/user/${userId}/show`);
@@ -77,7 +66,7 @@ const UserList: React.FC = () => {
       </TypographyUser>
       <div style={{ height: 400, width: "95%", boxShadow: '0px 2px 4px rgba(4, 4, 1, 0.4)', borderRadius: "8px" }}>
         {loading ? (
-          <LoadingComponent /> // Show the loader if loading is true
+          <LoadingComponent />
         ) : (
           <DataGrid
             columns={columns}

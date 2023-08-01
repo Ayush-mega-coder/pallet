@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import styled from "@mui/material/styles/styled";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import onion from "../../assets/ingredients/onion.png";
-import garlic from "../../assets/ingredients/garlic.png";
-import tomato from "../../assets/ingredients/tomato.png";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import axios from "axios";
@@ -21,8 +18,6 @@ const Container = styled(Box)({
   borderRadius: "5px",
   boxShadow: "0 2px 5px rgba(1, 1, 1, 0.1)",
   maxWidth: "400px",
-  // margin: "0 auto",
-  // marginTop: "1px",
   marginLeft: "40%",
   backgroundColor: "#fff",
 });
@@ -59,12 +54,6 @@ const Image = styled("img")({
   marginTop: "10px",
 });
 
-const CloseButton = styled(Link)({
-  cursor: "pointer",
-  fontSize: "20px",
-  marginLeft: "auto",
-});
-
 const StyledButton = styled(Button)({
   margin: "10px",
   backgroundColor: "white",
@@ -84,11 +73,6 @@ const IngredientShowPage: React.FC = () => {
   useEffect(() => {
     const fetchIngredient = async () => {
       try {
-        const token = document.cookie.replace(
-          /(?:(?:^|.*;\s*)authToken\s*=\s*([^;]*).*$)|^.*$/,
-          "$1"
-        );
-
         const response = await axios.get(
           `http://localhost:5000/api/ingredients/${id}`,
           {
@@ -99,14 +83,12 @@ const IngredientShowPage: React.FC = () => {
           }
         );
 
-        const data = response.data.data.ingredient; // Assuming the API response returns the ingredient details
-        console.log(data);
+        const data = response.data.data.ingredient;
         setIngredient(data);
       } catch (error) {
         console.error("Error fetching ingredient:", error);
       }
     };
-
     fetchIngredient();
   }, [id]);
 
@@ -139,8 +121,6 @@ const IngredientShowPage: React.FC = () => {
         <Date>Expiry: {ingredient.expiry.split("T")[0]}</Date>
 
         <Image src={ingredient.picture} alt={ingredient.name} />
-
-        {/* <CloseButton to="/ingredients">&times;</CloseButton> */}
       </Container>
     </>
   );

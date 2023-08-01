@@ -37,9 +37,7 @@ const useStyles = makeStyles((theme) => ({
     border: "1px solid #ccc",
     borderRadius: "5px",
     boxShadow: "0 2px 5px rgba(1, 1, 1, 0.1)",
-    // maxWidth: "400px",
     width:'25%',
-    // marginTop: "100px",
     marginLeft: "37.5%",
     height: "200px",
     backgroundColor: "#fff",
@@ -108,9 +106,6 @@ const UserShowPage = () => {
         <Typography className={classes.age}>Age: {user.age}</Typography>
         <Typography className={classes.email}>Email: {user.email}</Typography>
 
-        {/* <Image src={user.picture} alt={user.name} /> */}
-
-        {/* <CloseButton to="/users">&times;</CloseButton> */}
       </Box>
     </>
   );

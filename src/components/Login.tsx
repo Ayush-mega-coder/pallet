@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { styled } from "@mui/material/styles";
+import MenuIcon from "@mui/icons-material/Menu";
+import { useForm } from "react-hook-form";
+import axios from "axios";
 import {
   Dialog,
   DialogTitle,
@@ -13,27 +17,7 @@ import {
   IconButton,
   Typography,
   Avatar,
-  Box,
-  Menu,
-  MenuItem,
 } from "@mui/material";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { styled } from "@mui/material/styles";
-import MenuIcon from "@mui/icons-material/Menu";
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import axios from 'axios';
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#2196F3",
-    },
-    secondary: {
-      main: "#2196F3",
-    },
-  },
-});
 
 const LoginContainer = styled(DialogContent)({
   width: "400px",
@@ -67,7 +51,7 @@ interface LoginProps {
 type FormData = {
   username: string;
   password: string;
-}
+};
 
 const Login: React.FC<LoginProps> = ({ showPopup, onLoginSuccess }) => {
   const {
@@ -78,22 +62,19 @@ const Login: React.FC<LoginProps> = ({ showPopup, onLoginSuccess }) => {
 
   const [loading, setLoading] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login state
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // Key to store login status in localStorage
   const LOGIN_STATUS_KEY = "isLoggedIn";
 
-  const navigate = useNavigate();
-
   useEffect(() => {
-    // Check if the user is already logged in
     const storedStatus = localStorage.getItem(LOGIN_STATUS_KEY);
     const jwtToken = document.cookie.replace(
       /(?:(?:^|.*;\s*)authToken\s*=\s*([^;]*).*$)|^.*$/,
-      '$1'
+      "$1"
     );
 
-    if (storedStatus === 'true' && jwtToken) {
+    if (storedStatus === "true" && jwtToken) {
       setIsLoggedIn(true);
       onLoginSuccess(); // Automatically trigger login success if already logged in
     }
@@ -103,48 +84,42 @@ const Login: React.FC<LoginProps> = ({ showPopup, onLoginSuccess }) => {
     setLoading(true);
 
     try {
-      // Make the API request to get the JWT token
       const response = await axios.post(
-        'http://localhost:5000/api/users/login',
+        "http://localhost:5000/api/users/login",
         {
           email: data.username,
           password: data.password,
         }
       );
 
-
       if (response.status === 200) {
         setLoading(false);
-        setIsLoggedIn(true);  
+        setIsLoggedIn(true);
 
-
-        const token = response.data.token; 
-        console.log(token)
+        const token = response.data.token;
         document.cookie = `authToken=${token}; path=/; secure; HttpOnly; SameSite=Strict`;
-
         onLoginSuccess();
       } else {
         setLoading(false);
         setShowSnackbar(true);
       }
     } catch (error) {
-      console.error('Error while logging in:', error);
+      console.error("Error while logging in:", error);
       setLoading(false);
       setShowSnackbar(true);
     }
   };
 
   const handleSnackbarClose = () => {
-    setShowSnackbar(false); 
+    setShowSnackbar(false);
   };
-
 
   if (isLoggedIn) {
     return null;
   }
 
   return (
-    <ThemeProvider theme={theme}>
+    <>
       <AppBar position="fixed">
         <Toolbar>
           <IconButton edge="start" color="inherit" aria-label="menu">
@@ -155,7 +130,11 @@ const Login: React.FC<LoginProps> = ({ showPopup, onLoginSuccess }) => {
             Pallete
           </Typography>
 
-          <Avatar alt="User Profile" src="/path/to/profile-image.jpg" sx={{ marginLeft: 2 }} />
+          <Avatar
+            alt="User Profile"
+            src="/path/to/profile-image.jpg"
+            sx={{ marginLeft: 2 }}
+          />
         </Toolbar>
       </AppBar>
 
@@ -173,7 +152,9 @@ const Login: React.FC<LoginProps> = ({ showPopup, onLoginSuccess }) => {
                     required: "Username is required",
                   })}
                   error={Boolean(errors.username)}
-                  helperText={errors.username ? (errors.username.message as string) : ""}
+                  helperText={
+                    errors.username ? (errors.username.message as string) : ""
+                  }
                 />
               </Grid>
               <Grid item xs={12}>
@@ -185,7 +166,9 @@ const Login: React.FC<LoginProps> = ({ showPopup, onLoginSuccess }) => {
                     required: "Password is required",
                   })}
                   error={Boolean(errors.password)}
-                  helperText={errors.password ? (errors.password.message as string) : ""}
+                  helperText={
+                    errors.password ? (errors.password.message as string) : ""
+                  }
                 />
               </Grid>
               <Grid item xs={12}>
@@ -196,14 +179,17 @@ const Login: React.FC<LoginProps> = ({ showPopup, onLoginSuccess }) => {
                   type="submit"
                   disabled={loading}
                 >
-                  {loading ? <BlueCircularProgress size={24} color="secondary" /> : "Login"}
+                  {loading ? (
+                    <BlueCircularProgress size={24} color="secondary" />
+                  ) : (
+                    "Login"
+                  )}
                 </StyledButton>
               </Grid>
               <Grid item xs={12}>
-                {/* Add the Snackbar component */}
                 <Snackbar
                   open={showSnackbar}
-                  autoHideDuration={3000} // Snackbar will automatically close after 3 seconds
+                  autoHideDuration={3000}
                   onClose={handleSnackbarClose}
                   message="Invalid credentials"
                 />
@@ -212,7 +198,7 @@ const Login: React.FC<LoginProps> = ({ showPopup, onLoginSuccess }) => {
           </form>
         </LoginContainer>
       </Dialog>
-    </ThemeProvider>
+    </>
   );
 };
 
